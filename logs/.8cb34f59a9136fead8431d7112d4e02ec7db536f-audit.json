@@ -1,0 +1,14 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/Users/arevdika/Documents/typescript-node-express-realworld-example-app/logs/.8cb34f59a9136fead8431d7112d4e02ec7db536f-audit.json",
+    "files": [
+        {
+            "date": 1627885595470,
+            "name": "/Users/arevdika/Documents/typescript-node-express-realworld-example-app/logs/2021-08-02.log",
+            "hash": "1a79807a010dc18e09dce316b964e70b"
+        }
+    ]
+}
