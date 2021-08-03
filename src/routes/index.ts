@@ -5,6 +5,7 @@ import { ProfilesRoutes } from './profiles-routes';
 import { ArticlesRoutes } from './articles-routes';
 import { TestDataRoutes } from './test-data-routes';
 import { TestListRoutes } from './test-list-routes';
+import { UserTestMappingRoutes } from './user-test-mapping-routes';
 
 
 const router: Router = Router();
@@ -12,6 +13,7 @@ const router: Router = Router();
 
 router.use('/tags', TagRoutes);
 router.use('/', UsersRoutes);
+router.use('/mapping', UserTestMappingRoutes);
 router.use('/testData', TestDataRoutes);
 router.use('/testList', TestListRoutes);
 router.use('/profiles', ProfilesRoutes);
