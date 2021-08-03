@@ -9,8 +9,15 @@ export interface IUser {
   dob: string,
   fullName: string,
   mobileNumber: string
+  wallet: walletDetails
 }
 
+export interface walletDetails {
+  balance: number,
+  currency: string,
+  platform: string,
+  additionalData: object
+}
 
 export interface IProfile {
   username: string;

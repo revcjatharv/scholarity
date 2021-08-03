@@ -75,6 +75,9 @@ const UserSchema = new Schema({
   salt     : {
     type: Schema.Types.String
   },
+  wallet: {
+    type: Schema.Types.Mixed
+  }
 }, {timestamps: true});
 
 
