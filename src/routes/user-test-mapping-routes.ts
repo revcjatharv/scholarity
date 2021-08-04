@@ -5,13 +5,22 @@ import IUserTestModel, { UserTest } from '../database/models/user-test-mapping.m
 const router: Router = Router();
 
 
-router.post('/getUser', (req: Request, res: Response, next: NextFunction) => {
-    const {limit=10,skip=0} = req?.body
+router.post('/getTestByUserEmail', (req: Request, res: Response, next: NextFunction) => {
+    const {limit=10,skip=0,userId} = req?.body
     UserTest
-      .find().limit(limit).skip(skip).populate('userId').populate('testId').then((UserTest)=>{
+      .find({userId}).limit(limit).skip(skip).populate('userId').populate('testId').then((UserTest)=>{
           res.send({UserTest})
       })
       .catch(next);
+});
+
+router.post('/getUserByTestId', (req: Request, res: Response, next: NextFunction) => {
+  const {limit=10,skip=0,testId} = req?.body
+  UserTest
+    .find({testId}).limit(limit).skip(skip).populate('userId').populate('testId').then((UserTest)=>{
+        res.send({UserTest})
+    })
+    .catch(next);
 });
 
 

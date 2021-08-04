@@ -1,0 +1,14 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/Users/arevdika/Documents/scholarity/logs/.ea5d325d0ec4feb912caad39f9ed6f8f28fa14d2-audit.json",
+    "files": [
+        {
+            "date": 1627987985398,
+            "name": "/Users/arevdika/Documents/scholarity/logs/2021-08-03.log",
+            "hash": "22d8475516d224f89fca200700597947"
+        }
+    ]
+}

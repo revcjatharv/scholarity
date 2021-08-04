@@ -114,7 +114,8 @@ UserSchema.methods.toAuthJSON = function (): any {
     image   : this.image, 
     dob     : this.dob, 
     mobileNumber: this.mobileNumber,
-    fullName: this.fullName
+    fullName: this.fullName,
+    wallet: this.wallet
   };
 };
 

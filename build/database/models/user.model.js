@@ -76,6 +76,9 @@ const UserSchema = new mongoose_1.Schema({
     salt: {
         type: mongoose_1.Schema.Types.String
     },
+    wallet: {
+        type: mongoose_1.Schema.Types.Mixed
+    }
 }, { timestamps: true });
 UserSchema.plugin(mongooseUniqueValidator, { message: 'is already taken.' });
 UserSchema.methods.validPassword = function (password) {
@@ -105,7 +108,8 @@ UserSchema.methods.toAuthJSON = function () {
         image: this.image,
         dob: this.dob,
         mobileNumber: this.mobileNumber,
-        fullName: this.fullName
+        fullName: this.fullName,
+        wallet: this.wallet
     };
 };
 UserSchema.methods.toProfileJSONFor = function (user) {

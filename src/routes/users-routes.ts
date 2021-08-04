@@ -2,6 +2,8 @@ import { NextFunction, Request, Response, Router } from 'express';
 import IUserModel, { User } from '../database/models/user.model';
 import passport from 'passport';
 import { authentication } from "../utilities/authentication";
+import { emailer } from '../utilities/emailer';
+import { payment } from '../utilities/payment';
 
 const router: Router = Router();
 
@@ -37,7 +39,7 @@ router.put('/user', authentication.required, (req: Request, res: Response, next:
 
         // Update only fields that have values:
         // ISSUE: DRY out code?
-        if(typeof req.body.user.username !== 'undefined') {
+        if(typeof req.body.user.wallet !== 'undefined') {
           user.wallet = req.body.user.wallet
         }
 
@@ -65,6 +67,12 @@ router.post('/users', (req: Request, res: Response, next: NextFunction) => {
   user.dob =  req?.body?.user?.dob || ''
   user.mobileNumber =  req?.body?.user?.mobileNumber || ''
   user.fullName =  req?.body?.user?.fullName || ''
+  user.wallet = req?.body?.user?.wallet || {
+    balance: 0,
+    currency: 'INR',
+    platform: 'RAZORPAY',
+    additionalData: {}
+  }
 
   return user.save()
     .then(() => {
@@ -104,6 +112,16 @@ router.post('/users/login', (req: Request, res: Response, next: NextFunction) =>
   })(req, res, next);
 
 });
+
+router.post('/sendEmail', async (req: Request, res: Response, next: NextFunction) => {
+  const response  = await emailer(req.body)
+  return res.send({response})
+})
+
+router.post('/makePayment', async (req: Request, res: Response, next: NextFunction) => {
+  const response  = await payment(req.body.amount)
+  return res.send({response})
+})
 
 
 export const UsersRoutes: Router = router;
