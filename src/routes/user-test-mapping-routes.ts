@@ -40,7 +40,6 @@ router.post('/', (req: Request, res: Response, next: NextFunction) => {
         return res.json({user: userTest.toAuthJSON()});
       })
       .catch(next);
-  
   });
   
 
