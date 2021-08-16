@@ -12,6 +12,10 @@ const TestListSchema = new Schema({
     isConducted: {
         type: Schema.Types.Boolean
     },
+    testType: {
+        type: Schema.Types.String,
+        enum: ['UPSC', 'NEET', 'IIT', 'CA', 'AIIMS', 'GATE', 'NDA']
+    },
     testName: {
         type: Schema.Types.String
     },
@@ -30,6 +34,13 @@ const TestListSchema = new Schema({
     totalQuestions: {
         type: Schema.Types.Number
     },
+    timer: {
+        type: Schema.Types.Number,
+        default: 20000
+    },
+    instruction: {
+        type: Schema.Types.String,
+    },
     entryFee: {
         type: Schema.Types.Number
     }
@@ -37,6 +48,7 @@ const TestListSchema = new Schema({
 
 TestListSchema.methods.toAuthJSON = function (): any {
     return {
+        id: this._id,
         date: this.date,
         isConducted: this.isConducted,
         testName: this.testName,
@@ -44,6 +56,7 @@ TestListSchema.methods.toAuthJSON = function (): any {
         testTime: this.testTime,
         maxPrize: this.maxPrize,
         minPrize: this.minPrize,
+        timer: this.timer,
         totalQuestions: this.totalQuestions,
         entryFee: this.entryFee,
     };

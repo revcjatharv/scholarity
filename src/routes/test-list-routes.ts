@@ -1,23 +1,28 @@
 import { NextFunction, Request, Response, Router } from 'express';
 import { authentication } from '../utilities/authentication';
+
 import ITestModel, { TestList } from '../database/models/test.list.model';
-
-
+import { testType } from '../utilities/secrets';
 const router: Router = Router();
 
 
-router.get('/', (req: Request, res: Response, next: NextFunction) => {
+router.get('/getTestType', (req: Request, res: Response, next: NextFunction) => {
+  res.send({...testType})
+})
+
+router.post('/', (req: Request, res: Response, next: NextFunction) => {
     const date = new Date().toISOString().split('T')[0]
     const time = new Date().toISOString().split('T')[1].split('.')[0];
+    const { testType }:any = req?.body
     TestList
-      .find({date, testTime:{'$lt': time}}).then((testList)=>{
+      .find({date, testType, testTime:{'$lt': time}}).then((testList)=>{
           res.send({testList})
       })
       .catch(next);
 });
 
 
-router.post('/', (req: Request, res: Response, next: NextFunction) => {
+router.post('/testList', (req: Request, res: Response, next: NextFunction) => {
 
     const testList: ITestModel = new TestList();
     const {
@@ -25,22 +30,28 @@ router.post('/', (req: Request, res: Response, next: NextFunction) => {
         isConducted= false,
         testName= '',
         testDescription= '',
+        testType=  '',
         testTime= '',
+        timer= 20000,
         maxPrize= 0,
         minPrize= 0,
         totalQuestions= 0,
-        entryFee= 0
+        entryFee= 0,
+        instruction=''
     } = req?.body
     
     testList.date = date;
     testList.isConducted  = isConducted
     testList.testName  = testName
     testList.testDescription = testDescription
+    testList.testType=testType
     testList.testTime= testTime
     testList.maxPrize = maxPrize
     testList.minPrize=minPrize
     testList.totalQuestions = totalQuestions
     testList.entryFee = entryFee
+    testList.timer = timer
+    testList.instruction = instruction;
   
     return testList.save()
       .then(() => {
@@ -48,7 +59,7 @@ router.post('/', (req: Request, res: Response, next: NextFunction) => {
       })
       .catch(next);
   
-  });
+});
   
 
 

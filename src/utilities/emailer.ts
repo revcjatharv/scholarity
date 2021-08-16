@@ -1,4 +1,8 @@
 import * as nodemailer from "nodemailer";
+import { OtpData } from "../database/models/otp.model";
+const SendOtp = require('sendotp');
+const sendOtpAuth = new SendOtp('365411AWdufHq35610e086cP1');
+
 async function sendEmails(data:any) {
 
     let testAccount = await nodemailer.createTestAccount();
@@ -30,5 +34,28 @@ async function sendEmails(data:any) {
       return nodemailer.getTestMessageUrl(info);
 }
 
-export const emailer = sendEmails
+async function sendOtp(params:any) {
+  console.log('params====',params)
+  const {userId, isVerfied, otp, mobileNumber} = params
+  const checkIfOtpExist: any = await OtpData.findOne().where({mobileNumber}).populate('userId');
+  if(checkIfOtpExist) return {status: false, message: 'OTP Already exist. Please try again after sometime'};
+  const otpData = new OtpData({userId,isVerfied,otp,mobileNumber })
+  sendOtpAuth.send(mobileNumber, 'SCHLRT', otp, function (error:any, data:any) {
+    if(error)  return {status: false, message: 'Failed to send OTP. Please try again later'}
+    console.log(data); // data object with keys 'message' and 'type'
+    if(data.type == 'error') return {status: false, message: 'Failed to send OTP. Please try again later'}
+  });
+  sendOtpAuth.setOtpExpiry('1'); //in minutes
+  await otpData.save()
+  return {status: true, message: 'OTP sent successfully. '}
+}
+
+async function verfiyOtp(params:any) {
+  const {mobileNumber, otp} = params
+  const checkIfOtpExist = await OtpData.findOneAndDelete().where({mobileNumber, isVerfied: false, otp});
+  if(checkIfOtpExist) return {status: true, message: 'OTP succesfully verfied'};
+  return {status: false, message: 'Failed to verify the OTP. Please try again later'}
+}
+
+export const emailer = {sendEmails, sendOtp, verfiyOtp}
 

@@ -15,6 +15,13 @@ const UserTestSchema = new Schema({
         type: Schema.Types.ObjectId,
         required: true,
         ref:'TestList'
+    },
+    qARounds: {
+        type: Schema.Types.Array
+    },
+    totalMarks: {
+        type: Schema.Types.Number,
+        default: 0
     }
 }, { timestamps: true });
 
@@ -22,6 +29,8 @@ UserTestSchema.methods.toAuthJSON = function (): any {
     return {
         userId: this.userId,
         testId: this.testId,
+        qARounds: this.qARounds,
+        totalMarks: this.totalMarks
     };
 };
 

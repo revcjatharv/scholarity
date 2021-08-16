@@ -1,11 +1,12 @@
 
 
 export interface IArticle {
-  title: string;
-  description: string;
-  body: string;
-  link: string,
-  tag: string
-  author: string,
-  source: string
+  title         : String
+  description   : String
+  body          : String
+  link          : String
+  imageLink     : String
+  type          : String
+  createdAt     : String
+  updatedAt     : String
 }

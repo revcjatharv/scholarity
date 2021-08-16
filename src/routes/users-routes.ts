@@ -30,7 +30,7 @@ router.get('/user', authentication.required, (req: Request, res: Response, next:
 router.put('/user', authentication.required, (req: Request, res: Response, next: NextFunction) => {
 
     User
-      .findById(req.payload.id)
+      .findById(req.body.id)
       .then((user: IUserModel) => {
 
         if (!user && !user.wallet) {
@@ -39,6 +39,7 @@ router.put('/user', authentication.required, (req: Request, res: Response, next:
 
         // Update only fields that have values:
         // ISSUE: DRY out code?
+        // send the field accountNuumber, bankName, ifsc in additionlData
         if(typeof req.body.user.wallet !== 'undefined') {
           user.wallet = req.body.user.wallet
         }
@@ -113,8 +114,34 @@ router.post('/users/login', (req: Request, res: Response, next: NextFunction) =>
 
 });
 
+router.post('/requestPrizeMoney', async (req: Request, res: Response, next: NextFunction) => {
+  const {balance, userId, accountData}  = req?.body;
+  const getUser = await User.findById(userId);
+  if(getUser.wallet.balance > balance){
+    // send the money to a user by razor pay
+    // TBD
+    getUser.wallet.balance =getUser.wallet.balance-balance;
+    const saveUser =  await getUser.save();
+    const updateUser = await User.findOneAndUpdate({_id: userId}, {$set: {'wallet.additionalData': accountData}})
+    res.send({status: true, msg:'User saved with new balance', data: {saveUser, updateUser}})
+  }else{
+    return res.send({status: false, msg: 'Please request money less than or equal to what you have in your wallet balance'})
+  }
+
+})
+
+router.post('/sendOtp', async(req: Request, res: Response, next: NextFunction) => {
+  const response = await emailer.sendOtp(req?.body);
+  return res.send({response})
+} )
+
+router.post('/verifyOtp', async(req: Request, res: Response, next: NextFunction) => {
+  const response = await emailer.verfiyOtp(req?.body);
+  return res.send({response})
+} )
+
 router.post('/sendEmail', async (req: Request, res: Response, next: NextFunction) => {
-  const response  = await emailer(req.body)
+  const response  = await emailer.sendEmails(req.body)
   return res.send({response})
 })
 

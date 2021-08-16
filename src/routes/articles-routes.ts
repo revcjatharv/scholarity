@@ -19,8 +19,8 @@ router.get('/', authentication.optional, function (req: Request, res: Response, 
     offset = parseInt(req.query.offset as string);
   }
 
-  if (typeof req.query.tagList !== 'undefined') {
-    query = {tag: {$in : req.query.tagList}}
+  if (typeof req.query.type !== 'undefined') {
+    query = {type: req.query.type}
   }
 
     return Promise.all([

@@ -8,28 +8,24 @@ export default interface IArticleModel extends IArticle, Document {
 }
 
 const ArticleSchema = new Schema({
-  title         : {
+  title: {
     type: Schema.Types.String
   },
-  description   : {
+  description: {
     type: Schema.Types.String
   },
-  body          : {
+  body: {
     type: Schema.Types.String
   },
   link: {
     type: Schema.Types.String
-
   },
-  tag: {
+  imageLink: {
     type: Schema.Types.String
   },
-  source: {
+  type: {
     type: Schema.Types.String
-  },
-  author        : {
-    type: Schema.Types.String,
-  },
+  }
 }, {
   timestamps: true
 });
@@ -40,12 +36,11 @@ ArticleSchema.methods.toJSONFor = function () {
     title         : this.title,
     description   : this.description,
     body          : this.body,
-    source        : this.source,
     link          : this.link,
-    tag           : this.tag,
+    imageLink     : this.imageLink,
+    type          : this.type,
     createdAt     : this.createdAt,
     updatedAt     : this.updatedAt,
-    author        : this.author
   };
 
 };

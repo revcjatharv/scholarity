@@ -38,7 +38,7 @@ router.post('/', (req: Request, res: Response, next: NextFunction) => {
       })
       .catch(next);
   
-  });
+});
   
 
 export const TestDataRoutes: Router = router;
