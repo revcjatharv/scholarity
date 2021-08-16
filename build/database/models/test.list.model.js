@@ -4,7 +4,7 @@ exports.TestList = void 0;
 const mongoose_1 = require("mongoose");
 const TestListSchema = new mongoose_1.Schema({
     date: {
-        type: mongoose_1.Schema.Types.String
+        type: mongoose_1.Schema.Types.Date
     },
     isConducted: {
         type: mongoose_1.Schema.Types.Boolean

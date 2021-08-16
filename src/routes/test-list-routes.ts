@@ -11,11 +11,12 @@ router.get('/getTestType', (req: Request, res: Response, next: NextFunction) => 
 })
 
 router.post('/', (req: Request, res: Response, next: NextFunction) => {
-    const date = new Date().toISOString().split('T')[0]
+    const date = new Date(new Date().toISOString().split('T')[0])
     const time = new Date().toISOString().split('T')[1].split('.')[0];
     const { testType }:any = req?.body
+    console.log(date,time,testType)
     TestList
-      .find({date, testType, testTime:{'$lt': time}}).then((testList)=>{
+      .find({date: {$gte: date}, testType}).then((testList)=>{
           res.send({testList})
       })
       .catch(next);
@@ -26,7 +27,7 @@ router.post('/testList', (req: Request, res: Response, next: NextFunction) => {
 
     const testList: ITestModel = new TestList();
     const {
-        date= '',
+        date= new Date(),
         isConducted= false,
         testName= '',
         testDescription= '',
@@ -40,7 +41,7 @@ router.post('/testList', (req: Request, res: Response, next: NextFunction) => {
         instruction=''
     } = req?.body
     
-    testList.date = date;
+    testList.date = new Date(date);
     testList.isConducted  = isConducted
     testList.testName  = testName
     testList.testDescription = testDescription

@@ -1,6 +1,6 @@
 
 export interface ITestList {
-    date: string,
+    date: Date,
     isConducted: boolean,
     testName: string,
     testType: string,

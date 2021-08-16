@@ -7,7 +7,7 @@ export default interface ITestModel extends ITestList, Document {
 
 const TestListSchema = new Schema({
     date: {
-        type: Schema.Types.String
+        type: Schema.Types.Date
     },
     isConducted: {
         type: Schema.Types.Boolean
