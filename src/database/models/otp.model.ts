@@ -6,11 +6,6 @@ export default interface IOtpModel extends IOtp, Document {
 }
 
 const OtpSchema = new Schema({
-    userId: {
-        type: Schema.Types.String,
-        required: true,
-        ref:'User'
-    },
     isVerfied: {
         type: Schema.Types.Boolean,
         default: false
@@ -27,7 +22,6 @@ const OtpSchema = new Schema({
 
 OtpSchema.methods.toAuthJSON = function (): any {
     return {
-        userId: this.userId,
         isVerfied: this.isVerfied,
         otp: this.otp,
         mobileNumber: this.mobileNumber

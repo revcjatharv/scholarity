@@ -36,10 +36,10 @@ async function sendEmails(data:any) {
 
 async function sendOtp(params:any) {
   console.log('params====',params)
-  const {userId, isVerfied, otp, mobileNumber} = params
+  const {isVerfied, otp, mobileNumber} = params
   const checkIfOtpExist: any = await OtpData.findOne().where({mobileNumber}).populate('userId');
   if(checkIfOtpExist) return {status: false, message: 'OTP Already exist. Please try again after sometime'};
-  const otpData = new OtpData({userId,isVerfied,otp,mobileNumber })
+  const otpData = new OtpData({isVerfied,otp,mobileNumber })
   sendOtpAuth.send(mobileNumber, 'SCHLRT', otp, function (error:any, data:any) {
     if(error)  return {status: false, message: 'Failed to send OTP. Please try again later'}
     console.log(data); // data object with keys 'message' and 'type'
