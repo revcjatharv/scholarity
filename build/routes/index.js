@@ -10,6 +10,14 @@ const test_data_routes_1 = require("./test-data-routes");
 const test_list_routes_1 = require("./test-list-routes");
 const user_test_mapping_routes_1 = require("./user-test-mapping-routes");
 const router = express_1.Router();
+const middleware = (req, res, next) => {
+    const { headers } = req;
+    if (headers && headers.secure && headers.secure === 'ATHARV') {
+        return next();
+    }
+    return res.status(401).json({ staus: false, msg: 'Failed to autheticate API. Please verify once again', data: {} });
+};
+// router.use(middleware)
 router.use('/tags', tag_routes_1.TagRoutes);
 router.use('/', users_routes_1.UsersRoutes);
 router.use('/mapping', user_test_mapping_routes_1.UserTestMappingRoutes);

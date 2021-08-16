@@ -12,12 +12,21 @@ const UserTestSchema = new mongoose_1.Schema({
         type: mongoose_1.Schema.Types.ObjectId,
         required: true,
         ref: 'TestList'
+    },
+    qARounds: {
+        type: mongoose_1.Schema.Types.Array
+    },
+    totalMarks: {
+        type: mongoose_1.Schema.Types.Number,
+        default: 0
     }
 }, { timestamps: true });
 UserTestSchema.methods.toAuthJSON = function () {
     return {
         userId: this.userId,
         testId: this.testId,
+        qARounds: this.qARounds,
+        totalMarks: this.totalMarks
     };
 };
 exports.UserTest = mongoose_1.model('UserTest', UserTestSchema);

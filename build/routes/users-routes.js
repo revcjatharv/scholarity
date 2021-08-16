@@ -27,13 +27,14 @@ router.get('/user', authentication_1.authentication.required, (req, res, next) =
  */
 router.put('/user', authentication_1.authentication.required, (req, res, next) => {
     user_model_1.User
-        .findById(req.payload.id)
+        .findById(req.body.id)
         .then((user) => {
         if (!user && !user.wallet) {
             return res.sendStatus(401);
         }
         // Update only fields that have values:
         // ISSUE: DRY out code?
+        // send the field accountNuumber, bankName, ifsc in additionlData
         if (typeof req.body.user.wallet !== 'undefined') {
             user.wallet = req.body.user.wallet;
         }
@@ -93,8 +94,31 @@ router.post('/users/login', (req, res, next) => {
         }
     })(req, res, next);
 });
+router.post('/requestPrizeMoney', async (req, res, next) => {
+    const { balance, userId, accountData } = req === null || req === void 0 ? void 0 : req.body;
+    const getUser = await user_model_1.User.findById(userId);
+    if (getUser.wallet.balance > balance) {
+        // send the money to a user by razor pay
+        // TBD
+        getUser.wallet.balance = getUser.wallet.balance - balance;
+        const saveUser = await getUser.save();
+        const updateUser = await user_model_1.User.findOneAndUpdate({ _id: userId }, { $set: { 'wallet.additionalData': accountData } });
+        res.send({ status: true, msg: 'User saved with new balance', data: { saveUser, updateUser } });
+    }
+    else {
+        return res.send({ status: false, msg: 'Please request money less than or equal to what you have in your wallet balance' });
+    }
+});
+router.post('/sendOtp', async (req, res, next) => {
+    const response = await emailer_1.emailer.sendOtp(req === null || req === void 0 ? void 0 : req.body);
+    return res.send({ response });
+});
+router.post('/verifyOtp', async (req, res, next) => {
+    const response = await emailer_1.emailer.verfiyOtp(req === null || req === void 0 ? void 0 : req.body);
+    return res.send({ response });
+});
 router.post('/sendEmail', async (req, res, next) => {
-    const response = await emailer_1.emailer(req.body);
+    const response = await emailer_1.emailer.sendEmails(req.body);
     return res.send({ response });
 });
 router.post('/makePayment', async (req, res, next) => {

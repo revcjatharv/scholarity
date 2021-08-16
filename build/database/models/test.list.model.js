@@ -9,6 +9,10 @@ const TestListSchema = new mongoose_1.Schema({
     isConducted: {
         type: mongoose_1.Schema.Types.Boolean
     },
+    testType: {
+        type: mongoose_1.Schema.Types.String,
+        enum: ['UPSC', 'NEET', 'IIT', 'CA', 'AIIMS', 'GATE', 'NDA']
+    },
     testName: {
         type: mongoose_1.Schema.Types.String
     },
@@ -27,12 +31,20 @@ const TestListSchema = new mongoose_1.Schema({
     totalQuestions: {
         type: mongoose_1.Schema.Types.Number
     },
+    timer: {
+        type: mongoose_1.Schema.Types.Number,
+        default: 20000
+    },
+    instruction: {
+        type: mongoose_1.Schema.Types.String,
+    },
     entryFee: {
         type: mongoose_1.Schema.Types.Number
     }
 }, { timestamps: true });
 TestListSchema.methods.toAuthJSON = function () {
     return {
+        id: this._id,
         date: this.date,
         isConducted: this.isConducted,
         testName: this.testName,
@@ -40,6 +52,7 @@ TestListSchema.methods.toAuthJSON = function () {
         testTime: this.testTime,
         maxPrize: this.maxPrize,
         minPrize: this.minPrize,
+        timer: this.timer,
         totalQuestions: this.totalQuestions,
         entryFee: this.entryFee,
     };

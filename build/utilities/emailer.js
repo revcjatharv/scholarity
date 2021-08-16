@@ -21,6 +21,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.emailer = void 0;
 const nodemailer = __importStar(require("nodemailer"));
+const otp_model_1 = require("../database/models/otp.model");
+const SendOtp = require('sendotp');
+const sendOtpAuth = new SendOtp('365411AWdufHq35610e086cP1');
 async function sendEmails(data) {
     let testAccount = await nodemailer.createTestAccount();
     // create reusable transporter object using the default SMTP transport
@@ -46,5 +49,30 @@ async function sendEmails(data) {
     console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
     return nodemailer.getTestMessageUrl(info);
 }
-exports.emailer = sendEmails;
+async function sendOtp(params) {
+    console.log('params====', params);
+    const { userId, isVerfied, otp, mobileNumber } = params;
+    const checkIfOtpExist = await otp_model_1.OtpData.findOne().where({ mobileNumber }).populate('userId');
+    if (checkIfOtpExist)
+        return { status: false, message: 'OTP Already exist. Please try again after sometime' };
+    const otpData = new otp_model_1.OtpData({ userId, isVerfied, otp, mobileNumber });
+    sendOtpAuth.send(mobileNumber, 'SCHLRT', otp, function (error, data) {
+        if (error)
+            return { status: false, message: 'Failed to send OTP. Please try again later' };
+        console.log(data); // data object with keys 'message' and 'type'
+        if (data.type == 'error')
+            return { status: false, message: 'Failed to send OTP. Please try again later' };
+    });
+    sendOtpAuth.setOtpExpiry('1'); //in minutes
+    await otpData.save();
+    return { status: true, message: 'OTP sent successfully. ' };
+}
+async function verfiyOtp(params) {
+    const { mobileNumber, otp } = params;
+    const checkIfOtpExist = await otp_model_1.OtpData.findOneAndDelete().where({ mobileNumber, isVerfied: false, otp });
+    if (checkIfOtpExist)
+        return { status: true, message: 'OTP succesfully verfied' };
+    return { status: false, message: 'Failed to verify the OTP. Please try again later' };
+}
+exports.emailer = { sendEmails, sendOtp, verfiyOtp };
 //# sourceMappingURL=emailer.js.map

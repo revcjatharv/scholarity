@@ -19,7 +19,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DB = exports.SESSION_SECRET = exports.JWT_SECRET = exports.LOG_DIRECTORY = exports.APP_PORT = exports.IS_PRODUCTION = exports.ENVIRONMENT = void 0;
+exports.testType = exports.DB = exports.SESSION_SECRET = exports.JWT_SECRET = exports.LOG_DIRECTORY = exports.APP_PORT = exports.IS_PRODUCTION = exports.ENVIRONMENT = void 0;
 const dotenv = __importStar(require("dotenv"));
 const _ = __importStar(require("lodash"));
 const path = __importStar(require("path"));
@@ -36,5 +36,14 @@ exports.DB = {
     HOST: _.defaultTo(process.env.DB_HOST, "3.7.252.202"),
     NAME: _.defaultTo(process.env.DB_NAME, "scholarity"),
     PORT: _.defaultTo(parseInt(process.env.DB_PORT), 27017),
+};
+exports.testType = {
+    UPSC: 'UPSC',
+    NEET: 'NEET',
+    IIT: 'IIT-JEE',
+    CA: 'CHARTED ACCOUNTANT',
+    AIIMS: 'AIIMS',
+    GATE: 'GRADUATE APTITUDE TEST ENGINEERING',
+    NDA: 'NATIONAL DEFENCE ACADEMY'
 };
 //# sourceMappingURL=secrets.js.map
