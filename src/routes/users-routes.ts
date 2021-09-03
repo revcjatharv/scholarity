@@ -3,7 +3,7 @@ import IUserModel, { User } from '../database/models/user.model';
 import passport from 'passport';
 import { authentication } from "../utilities/authentication";
 import { emailer } from '../utilities/emailer';
-import { firebaseConfig } from "../utilities/firebaseConfig";
+// import { firebaseConfig } from "../utilities/firebaseConfig";
 import { payment } from '../utilities/payment';
 
 const router: Router = Router();
@@ -125,26 +125,26 @@ router.post('/changePassword', (req:Request, res: Response, next: NextFunction)=
 
 })
 
-router.post('/sendNotificationPush', (req:Request, res: Response, next: NextFunction)=> {
-  const notification_options = {
-    priority: "high",
-    timeToLive: 60 * 60 * 24
-  };
-  // Message format 
-  // notification: {
-  //   title: enter_subject_of_notification_here,
-  //   body: enter_message_here
-  //       }
-  const {registrationToken, message } = req?.body
-  firebaseConfig.admin.messaging().sendToDevice(registrationToken, message, notification_options)
-  .then( (response:any) => {
-   res.status(200).send("Notification sent successfully")
-  })
-  .catch( (error:any) => {
-      res.status(400).send('Failed to send user notification')
-  });
+// router.post('/sendNotificationPush', (req:Request, res: Response, next: NextFunction)=> {
+//   const notification_options = {
+//     priority: "high",
+//     timeToLive: 60 * 60 * 24
+//   };
+//   // Message format 
+//   // notification: {
+//   //   title: enter_subject_of_notification_here,
+//   //   body: enter_message_here
+//   //       }
+//   const {registrationToken, message } = req?.body
+//   firebaseConfig.admin.messaging().sendToDevice(registrationToken, message, notification_options)
+//   .then( (response:any) => {
+//    res.status(200).send("Notification sent successfully")
+//   })
+//   .catch( (error:any) => {
+//       res.status(400).send('Failed to send user notification')
+//   });
 
-})
+// })
 
 
 // ISSUE: How does this work with the trailing (req, res, next)?

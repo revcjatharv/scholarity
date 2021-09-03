@@ -22,6 +22,15 @@ router.get('/user', authentication_1.authentication.required, (req, res, next) =
     })
         .catch(next);
 });
+router.post('/userByMobileNumber', authentication_1.authentication.required, (req, res, next) => {
+    const { mobileNumber } = req.body;
+    user_model_1.User
+        .findOne({ mobileNumber })
+        .then((user) => {
+        res.status(200).json({ user: user.toAuthJSON() });
+    })
+        .catch(next);
+});
 /**
  * PUT /api/user
  */
@@ -29,18 +38,19 @@ router.put('/user', authentication_1.authentication.required, (req, res, next) =
     user_model_1.User
         .findById(req.body.id)
         .then((user) => {
-        if (!user && !user.wallet) {
+        var _a, _b;
+        if (!user) {
             return res.sendStatus(401);
         }
         // Update only fields that have values:
         // ISSUE: DRY out code?
         // send the field accountNuumber, bankName, ifsc in additionlData
-        if (typeof req.body.user.wallet !== 'undefined') {
+        if (typeof ((_b = (_a = req === null || req === void 0 ? void 0 : req.body) === null || _a === void 0 ? void 0 : _a.user) === null || _b === void 0 ? void 0 : _b.wallet) !== 'undefined') {
             user.wallet = req.body.user.wallet;
+            return user.save().then(() => {
+                return res.json({ user: user.toAuthJSON() });
+            });
         }
-        return user.save().then(() => {
-            return res.json({ user: user.toAuthJSON() });
-        });
     })
         .catch(next);
 });
@@ -67,6 +77,29 @@ router.post('/users', (req, res, next) => {
     return user.save()
         .then(() => {
         return res.json({ user: user.toAuthJSON() });
+    })
+        .catch(next);
+});
+router.post('/changePassword', (req, res, next) => {
+    const { mobileNumber, password, confirmPassword } = req.body;
+    if (password !== confirmPassword) {
+        return res.send('Password and confirm password does not matches');
+    }
+    user_model_1.User
+        .findOne({ mobileNumber })
+        .then((user) => {
+        if (!user) {
+            return res.send('User not found with this identity');
+        }
+        // Update only fields that have values:
+        // ISSUE: DRY out code?
+        // send the field accountNuumber, bankName, ifsc in additionlData
+        if (typeof password !== 'undefined') {
+            user.setPassword(password);
+        }
+        return user.save().then(() => {
+            return res.json({ user: user.toAuthJSON() });
+        });
     })
         .catch(next);
 });

@@ -2,10 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ArticlesRoutes = void 0;
 const express_1 = require("express");
-const authentication_1 = require("../utilities/authentication");
 const article_model_1 = require("../database/models/article.model");
 const router = express_1.Router();
-router.get('/', authentication_1.authentication.optional, function (req, res, next) {
+router.get('/', function (req, res, next) {
     let query = {};
     let limit = 20;
     let offset = 0;
@@ -36,7 +35,7 @@ router.get('/', authentication_1.authentication.optional, function (req, res, ne
         });
     }).catch(next);
 });
-router.post('/', authentication_1.authentication.required, function (req, res, next) {
+router.post('/', function (req, res, next) {
     const article = new article_model_1.Article(req.body.article);
     return article.save().then(function () {
         return res.json({ article: article.toJSONFor() });

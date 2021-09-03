@@ -2,15 +2,14 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserTestMappingRoutes = void 0;
 const express_1 = require("express");
-const user_model_1 = require("../database/models/user.model");
 const user_test_mapping_model_1 = require("../database/models/user-test-mapping.model");
 const router = express_1.Router();
 router.post('/getTestByUserEmail', async (req, res, next) => {
     const { limit = 100, skip = 0, userId } = req === null || req === void 0 ? void 0 : req.body;
     const user = await user_test_mapping_model_1.UserTest
         .find({ userId }).limit(limit).skip(skip).populate('userId').populate('testId');
-    const userCount = await user_test_mapping_model_1.UserTest.count({ userId }).exec();
-    return res.send({ user, userCount });
+    const testCount = await user_test_mapping_model_1.UserTest.count({ userId }).exec();
+    return res.send({ user, testCount });
 });
 router.post('/getUserByTestId', async (req, res, next) => {
     const { limit = 100, skip = 0, testId } = req === null || req === void 0 ? void 0 : req.body;
@@ -49,10 +48,7 @@ router.post('/getWinner', async (req, res, next) => {
     const { testId } = req === null || req === void 0 ? void 0 : req.body;
     const getUserTestData = await user_test_mapping_model_1.UserTest.find({ testId }).populate('userId').populate('testId').sort({ totalMarks: 'desc' }).limit(10);
     const winnerUser = getUserTestData[0].userId;
-    const getUser = await user_model_1.User.findById(winnerUser);
-    // to update all user balance at once in this place
-    // TBD
-    getUser.wallet.balance = getUser.wallet.balance + 20;
+    // update all user balance after this
     return res.send({ getUserTestData });
 });
 exports.UserTestMappingRoutes = router;
