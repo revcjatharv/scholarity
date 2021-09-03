@@ -6,7 +6,7 @@ import { Comment } from "../database/models/comment.model";
 
 const router: Router = Router();
 
-router.get('/', authentication.optional, function (req: Request, res: Response, next) {
+router.get('/', function (req: Request, res: Response, next) {
   let query: any = {};
   let limit        = 20;
   let offset       = 0;
@@ -42,7 +42,7 @@ router.get('/', authentication.optional, function (req: Request, res: Response, 
     }).catch(next);
   })
 
-router.post('/', authentication.required, function (req: Request, res: Response, next) {
+router.post('/', function (req: Request, res: Response, next) {
     const article = new Article(req.body.article);
     return article.save().then(function () {
       return res.json({article: article.toJSONFor()});

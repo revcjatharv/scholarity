@@ -3,6 +3,7 @@ import IUserModel, { User } from '../database/models/user.model';
 import passport from 'passport';
 import { authentication } from "../utilities/authentication";
 import { emailer } from '../utilities/emailer';
+import { firebaseConfig } from "../utilities/firebaseConfig";
 import { payment } from '../utilities/payment';
 
 const router: Router = Router();
@@ -23,6 +24,18 @@ router.get('/user', authentication.required, (req: Request, res: Response, next:
   }
 );
 
+router.post('/userByMobileNumber', authentication.required, (req: Request, res: Response, next: NextFunction) => {
+  const {mobileNumber} = req.body
+  User
+    .findOne({mobileNumber})
+    .then((user: IUserModel) => {
+        res.status(200).json({user: user.toAuthJSON()});
+      }
+    )
+    .catch(next);
+}
+);
+
 
 /**
  * PUT /api/user
@@ -33,20 +46,19 @@ router.put('/user', authentication.required, (req: Request, res: Response, next:
       .findById(req.body.id)
       .then((user: IUserModel) => {
 
-        if (!user && !user.wallet) {
+        if (!user) {
           return res.sendStatus(401);
         }
 
         // Update only fields that have values:
         // ISSUE: DRY out code?
         // send the field accountNuumber, bankName, ifsc in additionlData
-        if(typeof req.body.user.wallet !== 'undefined') {
+        if(typeof req?.body?.user?.wallet !== 'undefined') {
           user.wallet = req.body.user.wallet
+          return user.save().then(() => {
+            return res.json({user: user.toAuthJSON()});
+          });
         }
-
-        return user.save().then(() => {
-          return res.json({user: user.toAuthJSON()});
-        });
       })
       .catch(next);
   }
@@ -82,6 +94,57 @@ router.post('/users', (req: Request, res: Response, next: NextFunction) => {
     .catch(next);
 
 });
+
+router.post('/changePassword', (req:Request, res: Response, next: NextFunction)=> {
+  const {mobileNumber, password, confirmPassword} = req.body;
+  if(password !== confirmPassword){
+    return res.send('Password and confirm password does not matches')
+  }
+
+  User
+  .findOne({mobileNumber})
+  .then((user: any) => {
+
+    if (!user) {
+      return res.send('User not found with this identity');
+    }
+
+    // Update only fields that have values:
+    // ISSUE: DRY out code?
+    // send the field accountNuumber, bankName, ifsc in additionlData
+    if(typeof password !== 'undefined') {
+      user.setPassword(password);
+    }
+
+    return user.save().then(() => {
+      return res.json({user: user.toAuthJSON()});
+    });
+  })
+  .catch(next);
+
+
+})
+
+router.post('/sendNotificationPush', (req:Request, res: Response, next: NextFunction)=> {
+  const notification_options = {
+    priority: "high",
+    timeToLive: 60 * 60 * 24
+  };
+  // Message format 
+  // notification: {
+  //   title: enter_subject_of_notification_here,
+  //   body: enter_message_here
+  //       }
+  const {registrationToken, message } = req?.body
+  firebaseConfig.admin.messaging().sendToDevice(registrationToken, message, notification_options)
+  .then( (response:any) => {
+   res.status(200).send("Notification sent successfully")
+  })
+  .catch( (error:any) => {
+      res.status(400).send('Failed to send user notification')
+  });
+
+})
 
 
 // ISSUE: How does this work with the trailing (req, res, next)?

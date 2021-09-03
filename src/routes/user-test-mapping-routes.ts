@@ -59,10 +59,7 @@ router.post('/getWinner', async (req: Request, res: Response, next: NextFunction
   const {testId} = req?.body;
   const getUserTestData:IUserTestModel[] = await UserTest.find({testId}).populate('userId').populate('testId').sort({totalMarks: 'desc'}).limit(10);
   const winnerUser = getUserTestData[0].userId
-  const getUser = await User.findById(winnerUser)
-  // to update all user balance at once in this place
-  // TBD
-  getUser.wallet.balance = getUser.wallet.balance + 20;
+  // update all user balance after this
   return res.send({getUserTestData})
 })
 
