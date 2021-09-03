@@ -51,11 +51,11 @@ async function sendEmails(data) {
 }
 async function sendOtp(params) {
     console.log('params====', params);
-    const { userId, isVerfied, otp, mobileNumber } = params;
+    const { isVerfied, otp, mobileNumber } = params;
     const checkIfOtpExist = await otp_model_1.OtpData.findOne().where({ mobileNumber }).populate('userId');
     if (checkIfOtpExist)
         return { status: false, message: 'OTP Already exist. Please try again after sometime' };
-    const otpData = new otp_model_1.OtpData({ userId, isVerfied, otp, mobileNumber });
+    const otpData = new otp_model_1.OtpData({ isVerfied, otp, mobileNumber });
     sendOtpAuth.send(mobileNumber, 'SCHLRT', otp, function (error, data) {
         if (error)
             return { status: false, message: 'Failed to send OTP. Please try again later' };

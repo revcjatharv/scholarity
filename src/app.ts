@@ -7,6 +7,7 @@ import session from 'express-session';
 import helmet from "helmet";
 import compression from "compression";
 import { SESSION_SECRET } from "./utilities/secrets";
+import cors from "cors";
 import './database'; // initialize database
 import './utilities/passport'
 
@@ -26,6 +27,12 @@ app.use(session({
     saveUninitialized: false
   }
 ));
+app.options('*', cors());
+app.use(cors(
+  {
+    origin: "*",
+  }
+))
 app.use('/api', MainRouter);
 
 loadErrorHandlers(app);

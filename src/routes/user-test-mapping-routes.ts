@@ -10,8 +10,8 @@ router.post('/getTestByUserEmail', async (req: Request, res: Response, next: Nex
     const {limit=100,skip=0,userId} = req?.body
     const user = await UserTest
       .find({userId}).limit(limit).skip(skip).populate('userId').populate('testId')
-    const userCount = await UserTest.count({userId}).exec()
-    return res.send({user,userCount })
+    const testCount = await UserTest.count({userId}).exec()
+    return res.send({user,testCount })
 });
 
 router.post('/getUserByTestId', async (req: Request, res: Response, next: NextFunction) => {

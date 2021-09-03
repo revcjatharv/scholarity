@@ -30,6 +30,7 @@ const express_session_1 = __importDefault(require("express-session"));
 const helmet_1 = __importDefault(require("helmet"));
 const compression_1 = __importDefault(require("compression"));
 const secrets_1 = require("./utilities/secrets");
+const cors_1 = __importDefault(require("cors"));
 require("./database"); // initialize database
 require("./utilities/passport");
 const app = express_1.default();
@@ -43,6 +44,10 @@ app.use(express_session_1.default({
     },
     resave: false,
     saveUninitialized: false
+}));
+app.options('*', cors_1.default());
+app.use(cors_1.default({
+    origin: "*",
 }));
 app.use('/api', routes_1.MainRouter);
 error_handling_1.loadErrorHandlers(app);

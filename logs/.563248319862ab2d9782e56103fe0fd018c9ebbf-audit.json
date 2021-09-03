@@ -6,9 +6,19 @@
     "auditLog": "/Users/arevdika/Documents/GitHub/scholarity/logs/.563248319862ab2d9782e56103fe0fd018c9ebbf-audit.json",
     "files": [
         {
-            "date": 1629126276019,
-            "name": "/Users/arevdika/Documents/GitHub/scholarity/logs/2021-08-16.log",
-            "hash": "008a115dfc396ea148823efe177553b7"
+            "date": 1630216058789,
+            "name": "/Users/arevdika/Documents/GitHub/scholarity/logs/2021-08-29.log",
+            "hash": "691948d1ab2cfad20ce32776a66fa98b"
+        },
+        {
+            "date": 1630607075115,
+            "name": "/Users/arevdika/Documents/GitHub/scholarity/logs/2021-09-02.log",
+            "hash": "3a18d506ebad3f70585f07a5f9ea7afa"
+        },
+        {
+            "date": 1630607425815,
+            "name": "/Users/arevdika/Documents/GitHub/scholarity/logs/2021-09-03.log",
+            "hash": "fc9ff99a024c11162b9813dab8b043e8"
         }
     ]
 }

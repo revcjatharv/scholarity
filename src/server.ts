@@ -1,4 +1,5 @@
 import app from './app';
+const server = require('http').createServer(app);
 const socket =  require('socket.io')
 import { APP_PORT } from "./utilities/secrets";
 import logger from "./utilities/logger";
@@ -6,29 +7,45 @@ import { TestData } from './database/models/test.data.model';
 import { TestList } from './database/models/test.list.model';
 
 
-const server = app
+server
   .listen(APP_PORT, () => {
     logger.info(`server running on port : ${APP_PORT}`);
     console.log(`server running on port : ${APP_PORT}`);
   })
-  .on('error', (e) => logger.error(e));
+  .on('error', (e:any) => logger.error(e));
 
-const io = socket(server);
+const io = socket(server, {
+  cors:{
+    origin: "*",
+  }
+});
 
-io.sockets.on('connection', (socket:any)=>{
+io.on('connection', (socket:any)=>{
   console.log("Made a socket connection")
 
   socket.on('joinTest', async (testDetails:any)=>{
+    console.log("joined test", testDetails)
     socket.join(testDetails.testId);
   })
   socket.on('startTest', async (testDetails:any) => {
     const {testId} = testDetails
-    const testList = await TestList.findOne({testId, isConducted: false})
+    console.log("startTest test", testId)
+
+    const testList = await TestList.findOne({_id:testId, isConducted: false})
     const testListData = await TestData.find({testId})
+    console.log("testList", testList)
+
     for (let index = 1; index <= testList.totalQuestions; index++) {
+      if(index===1){
+        console.log( testListData[index-1], " testListData[index-1]", new Date())
+        socket.to(testId).emit('testQuestion', testListData[index-1])
+      } else {
         setTimeout(()=>{
+          console.log( testListData[index-1], " testListData[index-1]", new Date())
           socket.to(testId).emit('testQuestion', testListData[index-1])
-        }, testList.timer*index)
+        }, testList.timer*1000*index)
+      }
+
     };
   })
 
@@ -37,9 +54,14 @@ io.sockets.on('connection', (socket:any)=>{
     const testList = await TestList.findOne({testId});
     testList.isConducted = true;
     await testList.save();
+    console.log("end test hasa been called",testList)
     const testListData = await TestData.find({testId})
     socket.emit('testQuestions', {testListData, testList})
   })
 
 
+})
+
+io.on('disconnect',()=>{
+  console.log('Connection closed')
 })
