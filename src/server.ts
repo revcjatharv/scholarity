@@ -1,21 +1,22 @@
 import app from './app';
+const socket =  require('socket.io')
 import { APP_PORT } from "./utilities/secrets";
 import logger from "./utilities/logger";
-import { UserTest } from './database/models/user-test-mapping.model';
 import { TestData } from './database/models/test.data.model';
 import { TestList } from './database/models/test.list.model';
 
 
-app
+const server = app
   .listen(APP_PORT, () => {
     logger.info(`server running on port : ${APP_PORT}`);
     console.log(`server running on port : ${APP_PORT}`);
   })
   .on('error', (e) => logger.error(e));
 
-const io = require('socket.io').listen(app);
+const io = socket(server);
 
 io.sockets.on('connection', (socket:any)=>{
+  console.log("Made a socket connection")
 
   socket.on('joinTest', async (testDetails:any)=>{
     socket.join(testDetails.testId);
