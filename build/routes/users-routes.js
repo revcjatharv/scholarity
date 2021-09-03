@@ -9,6 +9,7 @@ const user_model_1 = require("../database/models/user.model");
 const passport_1 = __importDefault(require("passport"));
 const authentication_1 = require("../utilities/authentication");
 const emailer_1 = require("../utilities/emailer");
+// import { firebaseConfig } from "../utilities/firebaseConfig";
 const payment_1 = require("../utilities/payment");
 const router = express_1.Router();
 /**
@@ -36,9 +37,10 @@ router.post('/userByMobileNumber', authentication_1.authentication.required, (re
  */
 router.put('/user', authentication_1.authentication.required, (req, res, next) => {
     user_model_1.User
-        .findById(req.body.id)
+        .findOne({ email: req.body.user.email })
         .then((user) => {
         var _a, _b;
+        console.log("User====", user);
         if (!user) {
             return res.sendStatus(401);
         }
@@ -103,6 +105,25 @@ router.post('/changePassword', (req, res, next) => {
     })
         .catch(next);
 });
+// router.post('/sendNotificationPush', (req:Request, res: Response, next: NextFunction)=> {
+//   const notification_options = {
+//     priority: "high",
+//     timeToLive: 60 * 60 * 24
+//   };
+//   // Message format 
+//   // notification: {
+//   //   title: enter_subject_of_notification_here,
+//   //   body: enter_message_here
+//   //       }
+//   const {registrationToken, message } = req?.body
+//   firebaseConfig.admin.messaging().sendToDevice(registrationToken, message, notification_options)
+//   .then( (response:any) => {
+//    res.status(200).send("Notification sent successfully")
+//   })
+//   .catch( (error:any) => {
+//       res.status(400).send('Failed to send user notification')
+//   });
+// })
 // ISSUE: How does this work with the trailing (req, res, next)?
 /**
  * POST /api/users/login

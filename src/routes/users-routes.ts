@@ -43,9 +43,9 @@ router.post('/userByMobileNumber', authentication.required, (req: Request, res: 
 router.put('/user', authentication.required, (req: Request, res: Response, next: NextFunction) => {
 
     User
-      .findById(req.body.id)
+      .findOne({email: req.body.user.email})
       .then((user: IUserModel) => {
-
+        console.log("User====", user)
         if (!user) {
           return res.sendStatus(401);
         }
