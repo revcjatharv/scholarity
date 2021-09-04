@@ -44,9 +44,9 @@ router.get('/', function (req: Request, res: Response, next) {
 })
 
 router.post('/feedback', async (req: Request, res:Response, next) => {
-  const {userId, subject, body, star, type, question, answer} = req.body
+  const {userId, subject, body, star, type, question, answer, alternateEmail} = req.body
   const feedback = new Feedback({
-    userId, subject, body, star, type, question, answer
+    userId, subject, body, star, type, question, answer, alternateEmail
   })
   const savedFeedback = await feedback.save();
   return res.status(200).send({savedFeedback})

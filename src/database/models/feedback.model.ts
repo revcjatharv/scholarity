@@ -10,6 +10,9 @@ const FeedbackSchema = new Schema({
   userId: {
     type: Schema.Types.ObjectId
   },
+  alternateEmail: {
+    type: Schema.Types.String
+  },
   subject: {
     type: Schema.Types.String
   },
@@ -38,7 +41,11 @@ FeedbackSchema.methods.toJSONFor = function () {
   userId: this.userId,
   subject: this.subject,
   body: this.body,
-  type: this.type
+  star: this.star,
+  type: this.type,
+  alternateEmail: this.alternateEmail,
+  question: this.question,
+  answer: this.answer
   };
 
 };
