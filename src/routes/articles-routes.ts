@@ -52,6 +52,42 @@ router.post('/feedback', async (req: Request, res:Response, next) => {
   return res.status(200).send({savedFeedback})
 })
 
+router.get('/feedback', function (req: Request, res: Response, next) {
+  let query: any = {};
+  let limit        = 20;
+  let offset       = 0;
+
+  if (typeof req.query.limit !== 'undefined') {
+    limit = parseInt(req.query.limit as string);
+  }
+
+  if (typeof req.query.offset !== 'undefined') {
+    offset = parseInt(req.query.offset as string);
+  }
+
+  if (typeof req.query.type !== 'undefined') {
+    query = {type: req.query.type}
+  }
+
+    return Promise.all([
+      Feedback.find({...query})
+        .limit(Number(limit))
+        .skip(Number(offset))
+        .sort({createdAt: 'desc'})
+        .exec(),
+        Feedback.count({...query}).exec(),
+    ]).then(function (results) {
+      const feebacks      = results[0];
+      const feedbacksCount = results[1];
+      return res.json({
+        articles: feebacks.map(function (feeback) {
+          return feeback.toJSONFor();
+        }),
+        feedbacksCount: feedbacksCount
+      });
+    }).catch(next);
+})
+
 router.post('/', function (req: Request, res: Response, next) {
     const article = new Article(req.body.article);
     return article.save().then(function () {
