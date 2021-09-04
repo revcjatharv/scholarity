@@ -9,8 +9,9 @@ const router: Router = Router();
 
 router.get('/', function (req: Request, res: Response, next) {
   let query: any = {};
-  let limit        = 20;
-  let offset       = 0;
+
+  let limit = 20;
+  let offset = 0;
 
   if (typeof req.query.limit !== 'undefined') {
     limit = parseInt(req.query.limit as string);
@@ -21,41 +22,56 @@ router.get('/', function (req: Request, res: Response, next) {
   }
 
   if (typeof req.query.type !== 'undefined') {
-    query = {type: req.query.type}
+    query = { type: req.query.type }
   }
 
-    return Promise.all([
-      Article.find({...query})
-        .limit(Number(limit))
-        .skip(Number(offset))
-        .sort({createdAt: 'desc'})
-        .exec(),
-      Article.count({...query}).exec(),
-    ]).then(function (results) {
-      const articles      = results[0];
-      const articlesCount = results[1];
-      return res.json({
-        articles     : articles.map(function (article) {
-          return article.toJSONFor();
-        }),
-        articlesCount: articlesCount
-      });
-    }).catch(next);
+  return Promise.all([
+    Article.find({ ...query })
+      .limit(Number(limit))
+      .skip(Number(offset))
+      .sort({ createdAt: 'desc' })
+      .exec(),
+    Article.count({ ...query }).exec(),
+  ]).then(function (results) {
+    const articles = results[0];
+    const articlesCount = results[1];
+    return res.json({
+      articles: articles.map(function (article) {
+        return article.toJSONFor();
+      }),
+      articlesCount: articlesCount
+    });
+  }).catch(next);
 })
 
-router.post('/feedback', async (req: Request, res:Response, next) => {
-  const {userId, subject, body, star, type, question, answer, alternateEmail} = req.body
+router.get('/getArticleType', async function (req: Request, res: Response, next) {
+  const types = await Article.distinct('type');
+  const HOME_PAGE = types.indexOf('HOME_PAGE');
+  if (HOME_PAGE > -1) {
+    types.splice(HOME_PAGE, 1);
+  }
+
+  const WALLET = types.indexOf('WALLET');
+  if (WALLET > -1) {
+    types.splice(WALLET, 1);
+  }
+  return res.send({ types })
+
+})
+
+router.post('/feedback', async (req: Request, res: Response, next) => {
+  const { userId, subject, body, star, type, question, answer, alternateEmail } = req.body
   const feedback = new Feedback({
     userId, subject, body, star, type, question, answer, alternateEmail
   })
   const savedFeedback = await feedback.save();
-  return res.status(200).send({savedFeedback})
+  return res.status(200).send({ savedFeedback })
 })
 
 router.get('/feedback', function (req: Request, res: Response, next) {
   let query: any = {};
-  let limit        = 20;
-  let offset       = 0;
+  let limit = 20;
+  let offset = 0;
 
   if (typeof req.query.limit !== 'undefined') {
     limit = parseInt(req.query.limit as string);
@@ -66,33 +82,33 @@ router.get('/feedback', function (req: Request, res: Response, next) {
   }
 
   if (typeof req.query.type !== 'undefined') {
-    query = {type: req.query.type}
+    query = { type: req.query.type }
   }
 
-    return Promise.all([
-      Feedback.find({...query})
-        .limit(Number(limit))
-        .skip(Number(offset))
-        .sort({createdAt: 'desc'})
-        .exec(),
-        Feedback.count({...query}).exec(),
-    ]).then(function (results) {
-      const feebacks      = results[0];
-      const feedbacksCount = results[1];
-      return res.json({
-        articles: feebacks.map(function (feeback) {
-          return feeback.toJSONFor();
-        }),
-        feedbacksCount: feedbacksCount
-      });
-    }).catch(next);
+  return Promise.all([
+    Feedback.find({ ...query })
+      .limit(Number(limit))
+      .skip(Number(offset))
+      .sort({ createdAt: 'desc' })
+      .exec(),
+    Feedback.count({ ...query }).exec(),
+  ]).then(function (results) {
+    const feebacks = results[0];
+    const feedbacksCount = results[1];
+    return res.json({
+      articles: feebacks.map(function (feeback) {
+        return feeback.toJSONFor();
+      }),
+      feedbacksCount: feedbacksCount
+    });
+  }).catch(next);
 })
 
 router.post('/', function (req: Request, res: Response, next) {
-    const article = new Article(req.body.article);
-    return article.save().then(function () {
-      return res.json({article: article.toJSONFor()});
-    });
+  const article = new Article(req.body.article);
+  return article.save().then(function () {
+    return res.json({ article: article.toJSONFor() });
+  });
 });
 
 // return a article
