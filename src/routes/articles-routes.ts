@@ -2,6 +2,7 @@ import { Request, Response, Router } from 'express';
 import { authentication } from '../utilities/authentication';
 import { User } from '../database/models/user.model';
 import { Article } from "../database/models/article.model";
+import { Feedback } from "../database/models/feedback.model";
 import { Comment } from "../database/models/comment.model";
 
 const router: Router = Router();
@@ -40,7 +41,16 @@ router.get('/', function (req: Request, res: Response, next) {
         articlesCount: articlesCount
       });
     }).catch(next);
+})
+
+router.post('/feedback', async (req: Request, res:Response, next) => {
+  const {userId, subject, body, star, type, question, answer} = req.body
+  const feedback = new Feedback({
+    userId, subject, body, star, type, question, answer
   })
+  const savedFeedback = await feedback.save();
+  return res.status(200).send({savedFeedback})
+})
 
 router.post('/', function (req: Request, res: Response, next) {
     const article = new Article(req.body.article);
