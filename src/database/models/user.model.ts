@@ -75,6 +75,9 @@ const UserSchema = new Schema({
   salt     : {
     type: Schema.Types.String
   },
+  panCardImage     : {
+    type: Schema.Types.String
+  },
   wallet: {
     type: Schema.Types.Mixed
   }
@@ -116,7 +119,8 @@ UserSchema.methods.toAuthJSON = function (): any {
     dob     : this.dob, 
     mobileNumber: this.mobileNumber,
     fullName: this.fullName,
-    wallet: this.wallet
+    wallet: this.wallet,
+    panCardImage: this.panCardImage
   };
 };
 
@@ -128,7 +132,8 @@ UserSchema.methods.toProfileJSONFor = function (user: IUserModel) {
     following: user ? user.isFollowing(this._id) : false,
     dob     : this.dob, 
     mobileNumber: this.mobileNumber,
-    fullName: this.fullName
+    fullName: this.fullName,
+    panCardImage: this.panCardImage
   };
 };
 

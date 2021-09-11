@@ -9,7 +9,8 @@ export interface IUser {
   dob: string,
   fullName: string,
   mobileNumber: string
-  wallet: walletDetails
+  wallet: walletDetails,
+  panCardImage: string,
 }
 
 export interface walletDetails {

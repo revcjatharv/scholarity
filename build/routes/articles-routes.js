@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ArticlesRoutes = void 0;
 const express_1 = require("express");
 const article_model_1 = require("../database/models/article.model");
+const feedback_model_1 = require("../database/models/feedback.model");
 const router = express_1.Router();
 router.get('/', function (req, res, next) {
     let query = {};
@@ -32,6 +33,57 @@ router.get('/', function (req, res, next) {
                 return article.toJSONFor();
             }),
             articlesCount: articlesCount
+        });
+    }).catch(next);
+});
+router.get('/getArticleType', async function (req, res, next) {
+    const types = await article_model_1.Article.distinct('type');
+    const HOME_PAGE = types.indexOf('HOME_PAGE');
+    if (HOME_PAGE > -1) {
+        types.splice(HOME_PAGE, 1);
+    }
+    const WALLET = types.indexOf('WALLET');
+    if (WALLET > -1) {
+        types.splice(WALLET, 1);
+    }
+    return res.send({ types });
+});
+router.post('/feedback', async (req, res, next) => {
+    const { userId, subject, body, star, type, question, answer, alternateEmail } = req.body;
+    const feedback = new feedback_model_1.Feedback({
+        userId, subject, body, star, type, question, answer, alternateEmail
+    });
+    const savedFeedback = await feedback.save();
+    return res.status(200).send({ savedFeedback });
+});
+router.get('/feedback', function (req, res, next) {
+    let query = {};
+    let limit = 20;
+    let offset = 0;
+    if (typeof req.query.limit !== 'undefined') {
+        limit = parseInt(req.query.limit);
+    }
+    if (typeof req.query.offset !== 'undefined') {
+        offset = parseInt(req.query.offset);
+    }
+    if (typeof req.query.type !== 'undefined') {
+        query = { type: req.query.type };
+    }
+    return Promise.all([
+        feedback_model_1.Feedback.find(Object.assign({}, query))
+            .limit(Number(limit))
+            .skip(Number(offset))
+            .sort({ createdAt: 'desc' })
+            .exec(),
+        feedback_model_1.Feedback.count(Object.assign({}, query)).exec(),
+    ]).then(function (results) {
+        const feebacks = results[0];
+        const feedbacksCount = results[1];
+        return res.json({
+            articles: feebacks.map(function (feeback) {
+                return feeback.toJSONFor();
+            }),
+            feedbacksCount: feedbacksCount
         });
     }).catch(next);
 });

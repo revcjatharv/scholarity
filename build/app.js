@@ -37,6 +37,7 @@ const app = express_1.default();
 app.use(helmet_1.default());
 app.use(compression_1.default());
 app.use(bodyParser.json());
+app.use(express_1.default.static(__dirname));
 app.use(express_session_1.default({
     secret: secrets_1.SESSION_SECRET,
     cookie: {

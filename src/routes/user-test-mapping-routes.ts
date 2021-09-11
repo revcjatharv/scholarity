@@ -23,6 +23,13 @@ router.post('/getUserByTestId', async (req: Request, res: Response, next: NextFu
   return res.send({user,userCount })
 });
 
+router.post('/userTestAvl', async (req: Request, res: Response, next: NextFunction) => {
+  const {userId,testId} = req?.body
+  const user  = await UserTest
+    .find({testId,userId}).populate('userId').populate('testId')
+  return res.send({user })
+});
+
 router.post('/', (req: Request, res: Response, next: NextFunction) => {
 
     let userTest:any = {}

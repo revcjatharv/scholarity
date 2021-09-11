@@ -1,7 +1,44 @@
 import passport from 'passport';
 import { User } from '../database/models/user.model';
 import  passportLocal from 'passport-local';
+import { Strategy as GoogleTokenStrategy } from 'passport-custom';
+import { OAuth2Client } from 'google-auth-library';
 
+
+
+async function authenticateFromGoogle(accessToken:any, clientId:any) {
+  const client = new OAuth2Client(clientId);
+  const ticket = await client.verifyIdToken({
+      idToken: accessToken,
+      audience: clientId
+  });
+  return ticket.getPayload();
+}
+
+const mobileAppGoogleTokenAuthStrategy:any = new GoogleTokenStrategy(
+  async function appleSigninTokenAuth(req, done) {
+      try {
+          const clientId = '';
+          const accessToken = ''
+          const accessData = await authenticateFromGoogle(accessToken, clientId);
+
+          const userProfileInfo = {
+              firstName: accessData.given_name || null,
+              lastName: accessData.family_name || null,
+              gender: 'MALE',
+              birthDate: '',
+              email: accessData.email,
+              id: accessData.sub || null,
+              accessToken
+          };
+          return done(null, userProfileInfo);
+      } catch (err) {
+          return done(err);
+      }
+  }
+);
+
+mobileAppGoogleTokenAuthStrategy.name = 'google-token';
 
 const LocalStrategy = passportLocal.Strategy;
 
@@ -27,4 +64,6 @@ passport.use(new LocalStrategy({
         return done(null, user);
       })
       .catch(done);
-  }));
+}));
+
+passport.use(mobileAppGoogleTokenAuthStrategy)

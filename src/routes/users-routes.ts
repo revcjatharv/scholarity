@@ -3,8 +3,52 @@ import IUserModel, { User } from '../database/models/user.model';
 import passport from 'passport';
 import { authentication } from "../utilities/authentication";
 import { emailer } from '../utilities/emailer';
-// import { firebaseConfig } from "../utilities/firebaseConfig";
+import path from 'path';
+import passportMobileAppSocialAuth from '../utilities/fileUploader';
+
+
+import { firebaseConfig } from "../utilities/firebaseConfig";
 import { payment } from '../utilities/payment';
+
+const aws = require("aws-sdk");
+const multer = require("multer");
+const multerS3 = require("multer-s3");
+const bucketName = 'scholarity'
+const id = 'AKIAZ44S7I6G7HANIOSS'
+const secret = '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'
+const s3 = new aws.S3({
+  secretAccessKey: secret,
+  accessKeyId: id,
+  region: "ap-south-1",
+  ACL:'public-read'
+});
+const upload = multer({
+  limits: {
+      fileSize: 500 * 1024
+  },
+  fileFilter: (req:any, file:any, cb:any) => {
+
+      cb(null, {success: true, msg: 'true'});
+  },
+  storage: multerS3({
+      s3,
+      acl: 'public-read',
+      bucket: bucketName,
+      metadata: function metadata(req:any, file:any, cb:any) {
+          cb(null, { fieldName: file.fieldname });
+      },
+      key: function key(req:any, file:any, cb:any) {
+          const fileName = file.originalname;
+          const fileExtension = path.extname(fileName);
+          const fileNameNoExtension = path.basename(fileName, fileExtension);
+          const mdfied = `${fileNameNoExtension}${Date.now().toString()}`;
+          let subfolder = req.query.contentType || '';
+          subfolder = subfolder !== '' ? `${subfolder}/` : '';
+          cb(null, `${subfolder}${fileNameNoExtension}-${mdfied}${fileExtension}`);
+      }
+  })
+});
+
 
 const router: Router = Router();
 
@@ -125,26 +169,26 @@ router.post('/changePassword', (req:Request, res: Response, next: NextFunction)=
 
 })
 
-// router.post('/sendNotificationPush', (req:Request, res: Response, next: NextFunction)=> {
-//   const notification_options = {
-//     priority: "high",
-//     timeToLive: 60 * 60 * 24
-//   };
-//   // Message format 
-//   // notification: {
-//   //   title: enter_subject_of_notification_here,
-//   //   body: enter_message_here
-//   //       }
-//   const {registrationToken, message } = req?.body
-//   firebaseConfig.admin.messaging().sendToDevice(registrationToken, message, notification_options)
-//   .then( (response:any) => {
-//    res.status(200).send("Notification sent successfully")
-//   })
-//   .catch( (error:any) => {
-//       res.status(400).send('Failed to send user notification')
-//   });
+router.post('/sendNotificationPush', (req:Request, res: Response, next: NextFunction)=> {
+  const notification_options = {
+    priority: "high",
+    timeToLive: 60 * 60 * 24
+  };
+  // Message format 
+  // notification: {
+  //   title: enter_subject_of_notification_here,
+  //   body: enter_message_here
+  //       }
+  const {registrationToken, message } = req?.body
+  firebaseConfig.admin.messaging().sendToDevice(registrationToken, message, notification_options)
+  .then( (response:any) => {
+   res.status(200).send("Notification sent successfully")
+  })
+  .catch( (error:any) => {
+      res.status(400).send('Failed to send user notification')
+  });
 
-// })
+})
 
 
 // ISSUE: How does this work with the trailing (req, res, next)?
@@ -178,12 +222,13 @@ router.post('/users/login', (req: Request, res: Response, next: NextFunction) =>
 });
 
 router.post('/requestPrizeMoney', async (req: Request, res: Response, next: NextFunction) => {
-  const {balance, userId, accountData}  = req?.body;
+  const {balance, userId, accountData, panCardImage}  = req?.body;
   const getUser = await User.findById(userId);
   if(getUser.wallet.balance > balance){
     // send the money to a user by razor pay
     // TBD
     getUser.wallet.balance =getUser.wallet.balance-balance;
+    getUser.panCardImage = panCardImage;
     const saveUser =  await getUser.save();
     const updateUser = await User.findOneAndUpdate({_id: userId}, {$set: {'wallet.additionalData': accountData}})
     res.send({status: true, msg:'User saved with new balance', data: {saveUser, updateUser}})
@@ -212,6 +257,21 @@ router.post('/makePayment', async (req: Request, res: Response, next: NextFuncti
   const response  = await payment(req.body.amount)
   return res.send({response})
 })
+
+router.post('/uploadFiles', upload.single('myFile') ,async (req:any, res: Response, next) => {
+  if (!req?.file?.location) {
+    return res.send({success: false, msg: 'result failed succesfully', data: null});
+}
+  res.send({success: true, msg: 'result uploaded succesfully', data: req.file.location});
+})
+
+router.post(
+  '/login/google/token',
+  passportMobileAppSocialAuth('google-token'),
+  async (req: Request, res: Response, next: NextFunction) =>{
+    res.send({success: true, data: req.user, msg: 'success'})
+  }
+);
 
 
 export const UsersRoutes: Router = router;

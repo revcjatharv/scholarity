@@ -9,8 +9,47 @@ const user_model_1 = require("../database/models/user.model");
 const passport_1 = __importDefault(require("passport"));
 const authentication_1 = require("../utilities/authentication");
 const emailer_1 = require("../utilities/emailer");
-// import { firebaseConfig } from "../utilities/firebaseConfig";
+const path_1 = __importDefault(require("path"));
+const fileUploader_1 = __importDefault(require("../utilities/fileUploader"));
+const firebaseConfig_1 = require("../utilities/firebaseConfig");
 const payment_1 = require("../utilities/payment");
+const aws = require("aws-sdk");
+const multer = require("multer");
+const multerS3 = require("multer-s3");
+const bucketName = 'scholarity';
+const id = 'AKIAZ44S7I6G7HANIOSS';
+const secret = '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';
+const s3 = new aws.S3({
+    secretAccessKey: secret,
+    accessKeyId: id,
+    region: "ap-south-1",
+    ACL: 'public-read'
+});
+const upload = multer({
+    limits: {
+        fileSize: 500 * 1024
+    },
+    fileFilter: (req, file, cb) => {
+        cb(null, { success: true, msg: 'true' });
+    },
+    storage: multerS3({
+        s3,
+        acl: 'public-read',
+        bucket: bucketName,
+        metadata: function metadata(req, file, cb) {
+            cb(null, { fieldName: file.fieldname });
+        },
+        key: function key(req, file, cb) {
+            const fileName = file.originalname;
+            const fileExtension = path_1.default.extname(fileName);
+            const fileNameNoExtension = path_1.default.basename(fileName, fileExtension);
+            const mdfied = `${fileNameNoExtension}${Date.now().toString()}`;
+            let subfolder = req.query.contentType || '';
+            subfolder = subfolder !== '' ? `${subfolder}/` : '';
+            cb(null, `${subfolder}${fileNameNoExtension}-${mdfied}${fileExtension}`);
+        }
+    })
+});
 const router = express_1.Router();
 /**
  * GET /api/user
@@ -105,25 +144,25 @@ router.post('/changePassword', (req, res, next) => {
     })
         .catch(next);
 });
-// router.post('/sendNotificationPush', (req:Request, res: Response, next: NextFunction)=> {
-//   const notification_options = {
-//     priority: "high",
-//     timeToLive: 60 * 60 * 24
-//   };
-//   // Message format 
-//   // notification: {
-//   //   title: enter_subject_of_notification_here,
-//   //   body: enter_message_here
-//   //       }
-//   const {registrationToken, message } = req?.body
-//   firebaseConfig.admin.messaging().sendToDevice(registrationToken, message, notification_options)
-//   .then( (response:any) => {
-//    res.status(200).send("Notification sent successfully")
-//   })
-//   .catch( (error:any) => {
-//       res.status(400).send('Failed to send user notification')
-//   });
-// })
+router.post('/sendNotificationPush', (req, res, next) => {
+    const notification_options = {
+        priority: "high",
+        timeToLive: 60 * 60 * 24
+    };
+    // Message format 
+    // notification: {
+    //   title: enter_subject_of_notification_here,
+    //   body: enter_message_here
+    //       }
+    const { registrationToken, message } = req === null || req === void 0 ? void 0 : req.body;
+    firebaseConfig_1.firebaseConfig.admin.messaging().sendToDevice(registrationToken, message, notification_options)
+        .then((response) => {
+        res.status(200).send("Notification sent successfully");
+    })
+        .catch((error) => {
+        res.status(400).send('Failed to send user notification');
+    });
+});
 // ISSUE: How does this work with the trailing (req, res, next)?
 /**
  * POST /api/users/login
@@ -178,6 +217,16 @@ router.post('/sendEmail', async (req, res, next) => {
 router.post('/makePayment', async (req, res, next) => {
     const response = await payment_1.payment(req.body.amount);
     return res.send({ response });
+});
+router.post('/uploadFiles', upload.single('myFile'), async (req, res, next) => {
+    var _a;
+    if (!((_a = req === null || req === void 0 ? void 0 : req.file) === null || _a === void 0 ? void 0 : _a.location)) {
+        return res.send({ success: false, msg: 'result failed succesfully', data: null });
+    }
+    res.send({ success: true, msg: 'result uploaded succesfully', data: req.file.location });
+});
+router.post('/login/google/token', fileUploader_1.default('google-token'), async (req, res, next) => {
+    res.send({ success: true, data: req.user, msg: 'success' });
 });
 exports.UsersRoutes = router;
 //# sourceMappingURL=users-routes.js.map
