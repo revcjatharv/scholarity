@@ -223,15 +223,19 @@ router.post('/users/login', (req: Request, res: Response, next: NextFunction) =>
 
 router.post('/requestPrizeMoney', async (req: Request, res: Response, next: NextFunction) => {
   const {balance, userId, accountData, panCardImage}  = req?.body;
+  if(!panCardImage ||  !userId || !balance || !accountData){
+    return res.send({status: false, msg: 'Please review data multiple data missing'})
+
+  }
   const getUser = await User.findById(userId);
   if(getUser.wallet.balance > balance){
     // send the money to a user by razor pay
     // TBD
     getUser.wallet.balance =getUser.wallet.balance-balance;
     getUser.panCardImage = panCardImage;
+    getUser.wallet.additionalData = accountData
     const saveUser =  await getUser.save();
-    const updateUser = await User.findOneAndUpdate({_id: userId}, {$set: {'wallet.additionalData': accountData}})
-    res.send({status: true, msg:'User saved with new balance', data: {saveUser, updateUser}})
+    res.send({status: true, msg:'User saved with new balance', data: {saveUser}})
   }else{
     return res.send({status: false, msg: 'Please request money less than or equal to what you have in your wallet balance'})
   }
