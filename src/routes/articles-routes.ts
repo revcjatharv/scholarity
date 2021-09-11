@@ -104,6 +104,19 @@ router.get('/feedback', function (req: Request, res: Response, next) {
   }).catch(next);
 })
 
+router.post('/docs', function (req: Request, res: Response, next){
+  const {type} = req.body;
+  let url = ''
+  if(type === 'refund') {
+    url ='https://scholarity.s3.ap-south-1.amazonaws.com/refund+policy.docx'
+  } else if(type === 'tnc'){
+    url ='https://scholarity.s3.ap-south-1.amazonaws.com/Terms+and+condition+draft.docx'
+  } else if (type=== 'privacy'){
+    url ='https://scholarity.s3.ap-south-1.amazonaws.com/Privacy+Policy.docx'
+  }
+  return res.send({success: true, data:{url}})
+})
+
 router.post('/', function (req: Request, res: Response, next) {
   const article = new Article(req.body.article);
   return article.save().then(function () {
