@@ -16,7 +16,7 @@ async function authenticateFromGoogle(accessToken:any, clientId:any) {
 }
 
 const mobileAppGoogleTokenAuthStrategy:any = new GoogleTokenStrategy(
-  async function appleSigninTokenAuth(req, done) {
+  async function appleSigninTokenAuth(req:any, done:any) {
       try {
           const clientId = '';
           const accessToken = ''
