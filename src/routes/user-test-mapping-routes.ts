@@ -63,11 +63,15 @@ router.post('/updateUserMarks', async (req: Request, res: Response, next: NextFu
 })
 
 router.post('/getWinner', async (req: Request, res: Response, next: NextFunction) => {
-  const {testId} = req?.body;
-  const getUserTestData:IUserTestModel[] = await UserTest.find({testId}).populate('userId').populate('testId').sort({totalMarks: 'desc'}).limit(10);
+  const {testId, userId} = req?.body;
+  const getUserTestData:IUserTestModel[] = await UserTest.find({testId}).populate('userId').populate('testId').sort({totalMarks: 'asc'}).limit(10);
+  let getUserTestDataPerUser = null;
+  if(userId){
+  getUserTestDataPerUser = await UserTest.find({userId, testId}).populate('userId').populate('testId')
+  }
   const winnerUser = getUserTestData[0].userId
   // update all user balance after this
-  return res.send({getUserTestData})
+  return res.send({getUserTestData, getUserTestDataPerUser})
 })
 
 
