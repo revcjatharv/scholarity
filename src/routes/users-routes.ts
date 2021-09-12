@@ -9,6 +9,9 @@ import passportMobileAppSocialAuth from '../utilities/fileUploader';
 
 import { firebaseConfig } from "../utilities/firebaseConfig";
 import { payment } from '../utilities/payment';
+import ITestModel, { TestList } from '../database/models/test.list.model';
+import ITestDataModel, { TestData } from '../database/models/test.data.model';
+
 
 const aws = require("aws-sdk");
 const multer = require("multer");
@@ -50,6 +53,26 @@ const upload = multer({
 });
 
 
+const csvFilter = (req:any, file:any, cb:any) => {
+  if (file.mimetype.includes("csv")) {
+    cb(null, true);
+  } else {
+    cb("Please upload only csv file.", false);
+  }
+};
+
+var storage = multer.diskStorage({
+  destination: (req:any, file:any, cb:any) => {
+    cb(null, __dirname + "/uploads/");
+  },
+  filename: (req:any, file:any, cb:any) => {
+    console.log(file.originalname);
+    cb(null, `${Date.now()}-bezkoder-${file.originalname}`);
+  },
+});
+
+var uploadFile = multer({ storage: storage, fileFilter: csvFilter });
+
 const router: Router = Router();
 
 /**
@@ -79,6 +102,7 @@ router.post('/userByMobileNumber', authentication.required, (req: Request, res: 
     .catch(next);
 }
 );
+
 
 
 /**
@@ -276,6 +300,45 @@ router.post(
     res.send({success: true, data: req.user, msg: 'success'})
   }
 );
+
+router.post('/uploadTestList',uploadFile.single('myFile'),async (req: any, res: Response, next: NextFunction) => {
+  const csvtojson=require("csvtojson");
+  let path = __dirname + "/uploads/" + req.file.filename;
+  const jsonArray=await csvtojson().fromFile(path);
+  console.log("jsonArray",jsonArray)
+  for (let index = 0; index < jsonArray.length; index++) {
+    const element = jsonArray[index];
+    const testList: ITestModel = new TestList({...element});
+    await testList.save()
+  }
+
+  return res.send({success: true, msg: 'saved test success'});
+})
+
+router.post('/uploadTestData',uploadFile.single('myFile'),async (req: any, res: Response, next: NextFunction) => {
+  const csvtojson=require("csvtojson");
+  let path = __dirname + "/uploads/" + req.file.filename;
+  const jsonArray=await csvtojson().fromFile(path);
+  console.log("jsonArray",jsonArray)
+  for (let index = 0; index < jsonArray.length; index++) {
+    const element = jsonArray[index];
+    const testListName = await TestList.findOne({testName:element.testName});
+    delete element.testName;
+    if(testListName) {
+      element.options = []
+      element.options.push(element['options/0'])
+      element.options.push(element['options/1'])
+      element.options.push(element['options/2'])
+      element.options.push(element['options/3'])
+      element.testId=  testListName._id
+      const testData: ITestDataModel = new TestData({...element});
+      await testData.save()
+    }
+  }
+
+  return res.send({success: true, msg: 'saved test success'});
+})
+
 
 
 export const UsersRoutes: Router = router;
