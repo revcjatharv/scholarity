@@ -8,6 +8,7 @@ export interface IUserTest {
 
 export interface qARounds {
     questionNumber: string,
+    question: string,
     isAnsCorrect: boolean,
     userAns: string,
     timeTaken: Date,

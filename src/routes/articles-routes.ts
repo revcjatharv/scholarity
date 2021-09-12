@@ -108,11 +108,11 @@ router.post('/docs', function (req: Request, res: Response, next){
   const {type} = req.body;
   let url = ''
   if(type === 'refund') {
-    url ='https://scholarity.s3.ap-south-1.amazonaws.com/refund+policy.docx'
+    url ='https://scholarity.s3.ap-south-1.amazonaws.com/refund%2Bpolicy.pdf'
   } else if(type === 'tnc'){
-    url ='https://scholarity.s3.ap-south-1.amazonaws.com/Terms+and+condition+draft.docx'
+    url ='https://scholarity.s3.ap-south-1.amazonaws.com/Terms%2Band%2Bcondition%2Bdraft.pdf'
   } else if (type=== 'privacy'){
-    url ='https://scholarity.s3.ap-south-1.amazonaws.com/Privacy+Policy.docx'
+    url ='https://scholarity.s3.ap-south-1.amazonaws.com/Privacy%2BPolicy.pdf'
   }
   return res.send({success: true, data:{url}})
 })
