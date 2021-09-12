@@ -158,6 +158,7 @@ router.post('/users', (req: Request, res: Response, next: NextFunction) => {
   user.dob =  req?.body?.user?.dob || ''
   user.mobileNumber =  req?.body?.user?.mobileNumber || ''
   user.fullName =  req?.body?.user?.fullName || ''
+  user.firebaseToken = req.body.user.firebaseToken;
   user.wallet = req?.body?.user?.wallet || {
     balance: 0,
     currency: 'INR',

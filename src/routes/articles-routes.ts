@@ -85,6 +85,10 @@ router.get('/feedback', function (req: Request, res: Response, next) {
     query = { type: req.query.type }
   }
 
+  if (typeof req.query.userId !== 'undefined') {
+    query = { userId: req.query.userId, ...query }
+  }
+
   return Promise.all([
     Feedback.find({ ...query })
       .limit(Number(limit))
@@ -124,6 +128,10 @@ router.post('/', function (req: Request, res: Response, next) {
   });
 });
 
+
+router.post('/', function (req: Request, res: Response, next) {
+
+})
 // return a article
 // router.get('/:article', authentication.optional, function (req: Request, res: Response, next) {
 //   Promise.all([
