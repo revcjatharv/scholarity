@@ -219,8 +219,11 @@ router.post('/sendNotificationPush', (req:Request, res: Response, next: NextFunc
 /**
  * POST /api/users/login
  */
-router.post('/users/login', (req: Request, res: Response, next: NextFunction) => {
-
+router.post('/users/login', async (req: Request, res: Response, next: NextFunction) => {
+  if(req.body.user.firebaseToken && req.body.user.email){
+    const user = await User.findOne({email:req.body.user.email })
+    user.firebaseToken  = req.body.user.firebaseToken
+  }
   if (!req.body.user.email) {
     return res.status(422).json({errors: {email: "Can't be blank"}});
   }

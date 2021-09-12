@@ -11,6 +11,7 @@ export interface IUser {
   mobileNumber: string
   wallet: walletDetails,
   panCardImage: string,
+  firebaseToken: string
 }
 
 export interface walletDetails {

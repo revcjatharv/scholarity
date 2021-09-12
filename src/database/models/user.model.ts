@@ -80,6 +80,9 @@ const UserSchema = new Schema({
   },
   wallet: {
     type: Schema.Types.Mixed
+  },
+  firebaseToken:{
+    type: Schema.Types.String
   }
 }, {timestamps: true});
 
@@ -120,7 +123,8 @@ UserSchema.methods.toAuthJSON = function (): any {
     mobileNumber: this.mobileNumber,
     fullName: this.fullName,
     wallet: this.wallet,
-    panCardImage: this.panCardImage
+    panCardImage: this.panCardImage,
+    firebaseToken: this.firebaseToken
   };
 };
 
@@ -133,7 +137,8 @@ UserSchema.methods.toProfileJSONFor = function (user: IUserModel) {
     dob     : this.dob, 
     mobileNumber: this.mobileNumber,
     fullName: this.fullName,
-    panCardImage: this.panCardImage
+    panCardImage: this.panCardImage,
+    firebaseToken: this.firebaseToken
   };
 };
 
