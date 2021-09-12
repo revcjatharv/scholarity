@@ -185,7 +185,7 @@ router.post('/changePassword', (req:Request, res: Response, next: NextFunction)=
   .then((user: any) => {
 
     if (!user) {
-      return res.send('User not found with this identity');
+      return res.send({status: false,msg: 'User not found with this identity'});
     }
 
     // Update only fields that have values:
