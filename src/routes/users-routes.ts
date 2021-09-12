@@ -118,15 +118,25 @@ router.put('/user', authentication.required, (req: Request, res: Response, next:
           return res.sendStatus(401);
         }
 
+        if(typeof req?.body?.user?.fullName !== 'undefined'){
+          user.fullName = req?.body?.user?.fullName
+        }
+        if(typeof req?.body?.user?.image !== 'undefined'){
+          user.image = req?.body?.user?.image
+        }
+        if(typeof req?.body?.user?.dob !== 'undefined'){
+          user.dob = req?.body?.user?.dob
+        }
         // Update only fields that have values:
         // ISSUE: DRY out code?
         // send the field accountNuumber, bankName, ifsc in additionlData
         if(typeof req?.body?.user?.wallet !== 'undefined') {
           user.wallet = req.body.user.wallet
-          return user.save().then(() => {
-            return res.json({user: user.toAuthJSON()});
-          });
         }
+
+        return user.save().then(() => {
+          return res.json({user: user.toAuthJSON()});
+        });
       })
       .catch(next);
   }
