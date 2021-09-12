@@ -154,7 +154,7 @@ router.post('/users', (req: Request, res: Response, next: NextFunction) => {
   user.email    = req.body.user.email;
   user.setPassword(req.body.user.password);
   user.bio   = '';
-  user.image = '';
+  user.image = req.body.user.image;
   user.dob =  req?.body?.user?.dob || ''
   user.mobileNumber =  req?.body?.user?.mobileNumber || ''
   user.fullName =  req?.body?.user?.fullName || ''
