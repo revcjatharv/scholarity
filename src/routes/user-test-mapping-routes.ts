@@ -47,17 +47,18 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
     if(user && user.wallet && user.wallet.balance >= test.entryFee){
       user.wallet.balance = user.wallet.balance-test.entryFee
       await user.save()
+      console.log("userTest", userTest)
+      await UserTest.findOneAndUpdate({testId, userId}, userTest ,{upsert: true}).then(response=>{
+        if(response){
+          return res.send({status: false, msg: 'User has already registred with test.'})
+        }
+        res.send({status: true, msg: 'Registred for the test succssefully'})
+      }).catch(next);
     } else {
       res.send({status: false, msg: 'Balance is low please recharge your account before enrollment'})
     }
 
-    console.log("userTest", userTest)
-    await UserTest.findOneAndUpdate({testId, userId}, userTest ,{upsert: true}).then(response=>{
-      if(response){
-        return res.send({status: false, msg: 'User has already registred with test.'})
-      }
-      res.send({status: true, msg: 'Registred for the test succssefully'})
-    }).catch(next);
+
 });
 
 router.post('/updateUserMarks', async (req: Request, res: Response, next: NextFunction) => {
