@@ -52,7 +52,7 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
     }
 
     console.log("userTest", userTest)
-    UserTest.findOneAndUpdate({testId, userId}, userTest ,{upsert: true}).then(response=>{
+    await UserTest.findOneAndUpdate({testId, userId}, userTest ,{upsert: true}).then(response=>{
       if(response){
         return res.send({status: false, msg: 'User has already registred with test.'})
       }
