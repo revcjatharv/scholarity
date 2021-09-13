@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response, Router } from 'express';
 import { User } from '../database/models/user.model';
 import IUserTestModel, { UserTest } from '../database/models/user-test-mapping.model';
+import { TestList } from '../database/models/test.list.model';
 
 
 const router: Router = Router();
@@ -30,7 +31,7 @@ router.post('/userTestAvl', async (req: Request, res: Response, next: NextFuncti
   return res.send({user })
 });
 
-router.post('/', (req: Request, res: Response, next: NextFunction) => {
+router.post('/', async (req: Request, res: Response, next: NextFunction) => {
 
     let userTest:any = {}
     const {
@@ -40,6 +41,16 @@ router.post('/', (req: Request, res: Response, next: NextFunction) => {
     
     userTest.userId = userId
     userTest.testId = testId
+    const user = await User.findById(userId);
+    const test = await TestList.findById(testId)
+
+    if(user && user.wallet && user.wallet.balance >= test.entryFee){
+      user.wallet.balance = user.wallet.balance-test.entryFee
+      await user.save()
+    } else {
+      res.send({status: false, msg: 'Balance is low please recharge your account before enrollment'})
+    }
+
     console.log("userTest", userTest)
     UserTest.findOneAndUpdate({testId, userId}, userTest ,{upsert: true}).then(response=>{
       if(response){
