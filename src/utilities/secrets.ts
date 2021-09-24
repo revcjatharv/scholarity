@@ -13,7 +13,7 @@ export const SESSION_SECRET = _.defaultTo(process.env.SESSION_SECRET, "secret");
 export const DB             = {
   USER    : _.defaultTo(process.env.DB_USER, "root"),
   PASSWORD: _.defaultTo(process.env.DB_USER_PWD, "secret"),
-  HOST    : _.defaultTo(process.env.DB_HOST, "3.109.135.119"),
+  HOST    : _.defaultTo(process.env.DB_HOST, "3.7.252.202"),
   NAME    : _.defaultTo(process.env.DB_NAME, "scholarity"),
   PORT    : _.defaultTo(parseInt(process.env.DB_PORT), 27017),
 }

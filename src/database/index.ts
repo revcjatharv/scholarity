@@ -3,7 +3,7 @@ import logger from "../utilities/logger";
 import { DB } from "../utilities/secrets";
 
 // Build the connection string
-const dbURI = `mongodb://atharv1234:atharv1234@3.109.135.119:27017/scholarity?authSource=admin`;
+const dbURI = `mongodb://3.7.252.202:27017/scholarity`;
 
 const options = {
   useNewUrlParser   : true,
