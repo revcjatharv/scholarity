@@ -78,7 +78,8 @@ router.post('/updateUserMarks', async (req: Request, res: Response, next: NextFu
 
 
 router.post('/sendNotificationToUsersFortest',async (req: Request, res: Response, next: NextFunction) =>{
-  const agenda = new Agenda();
+  const mongoConnectionString = 'mongodb://atharv:atharv123@3.7.252.202:27017/scholarity?authSource=admin'
+  const agenda = new Agenda({ db: { address: mongoConnectionString } });
   agenda.define('sendNotifications',
   async () =>{
     const date = new Date(new Date().toISOString().split('T')[0])
