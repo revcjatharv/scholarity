@@ -29,7 +29,7 @@ const s3 = new aws.S3({
 });
 const upload = multer({
   limits: {
-      fileSize: 500 * 1024
+      fileSize: 500 * 1024 *1024
   },
   fileFilter: (req:any, file:any, cb:any) => {
 
