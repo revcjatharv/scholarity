@@ -172,6 +172,7 @@ router.post('/sendNotificationToUsersFortest',async (req: Request, res: Response
     }
   }
   );
+  await agenda.start();
   agenda.every('1 minutes', 'sendNotifications');
   return res.send('Cron started')
 })
