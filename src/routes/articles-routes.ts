@@ -112,11 +112,11 @@ router.post('/docs', function (req: Request, res: Response, next){
   const {type} = req.body;
   let url = ''
   if(type === 'refund') {
-    url ='https://scholarity.s3.ap-south-1.amazonaws.com/refund%2Bpolicy.pdf'
+    url = 'https://scholaritynew.s3.ap-south-1.amazonaws.com/refund%2Bpolicy+(1).pdf'
   } else if(type === 'tnc'){
-    url ='https://scholarity.s3.ap-south-1.amazonaws.com/Terms%2Band%2Bcondition%2Bdraft.pdf'
+    url = 'https://scholaritynew.s3.ap-south-1.amazonaws.com/Terms%2Band%2Bcondition%2Bdraft+(1).pdf'
   } else if (type=== 'privacy'){
-    url ='https://scholarity.s3.ap-south-1.amazonaws.com/Privacy%2BPolicy.pdf'
+    url = 'https://scholaritynew.s3.ap-south-1.amazonaws.com/Privacy%2BPolicy+(1).pdf'
   }
   return res.send({success: true, data:{url}})
 })

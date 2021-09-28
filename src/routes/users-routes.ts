@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response, Router } from 'express';
 import IUserModel, { User } from '../database/models/user.model';
+import { Notification } from '../database/models/notification.model';
 import passport from 'passport';
 import { authentication } from "../utilities/authentication";
 import { emailer } from '../utilities/emailer';
@@ -12,18 +13,19 @@ import { payment } from '../utilities/payment';
 import ITestModel, { TestList } from '../database/models/test.list.model';
 import ITestDataModel, { TestData } from '../database/models/test.data.model';
 
+require('dotenv').config();
 
 const aws = require("aws-sdk");
 const multer = require("multer");
 const multerS3 = require("multer-s3");
-const bucketName = 'scholarity'
-const id = 'AKIAZ44S7I6G7HANIOSS'
-const secret = '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'
+const bucketName = process.env.BUCKET_NAME
+const id = process.env.ID
+const secret = process.env.SECRET
 const s3 = new aws.S3({
   secretAccessKey: secret,
   accessKeyId: id,
-  region: "ap-south-1",
-  ACL:'public-read'
+  region: process.env.REGION,
+  ACL: process.env.ACL
 });
 const upload = multer({
   limits: {
@@ -204,7 +206,7 @@ router.post('/changePassword', (req:Request, res: Response, next: NextFunction)=
 
 })
 
-router.post('/sendNotificationPush', (req:Request, res: Response, next: NextFunction)=> {
+router.post('/sendNotificationPush', async (req:Request, res: Response, next: NextFunction)=> {
   const notification_options = {
     priority: "high",
     timeToLive: 60 * 60 * 24
@@ -214,15 +216,42 @@ router.post('/sendNotificationPush', (req:Request, res: Response, next: NextFunc
   //   title: enter_subject_of_notification_here,
   //   body: enter_message_here
   //       }
-  const {registrationToken, message } = req?.body
-  firebaseConfig.admin.messaging().sendToDevice(registrationToken, message, notification_options)
-  .then( (response:any) => {
-   res.status(200).send("Notification sent successfully")
-  })
-  .catch( (error:any) => {
-      res.status(400).send('Failed to send user notification')
-  });
 
+  // save notification to INotification model
+
+  const {userId, message } = req?.body
+  const user = await User.findById(userId);
+  if(user && user.firebaseToken){
+    firebaseConfig.admin.messaging().sendToDevice(user.firebaseToken, message, notification_options)
+    .then( async (response:any) => {
+    const notification = new Notification({
+      title         : message.notification.title,
+      description   : JSON.stringify(message),
+      body          : JSON.stringify(req.body),
+      link          : '',
+      imageLink     : '',
+      userId        : userId,
+    })
+    await notification.save()
+     res.status(200).send({msg:"Notification sent successfully", data: response,status:true})
+    })
+    .catch( (error:any) => {
+        res.status(400).send({msg: 'Failed to send user notification', data: error,status:false})
+    });
+  } else {
+    res.status(400).send({msg: 'User not found', data: {}, status:false})
+  }
+
+})
+
+router.post('/getNotificationPerUser', async (req:Request, res: Response, next: NextFunction) => {
+  const {userId} = req.body 
+  const notification = await Notification.find({userId});
+  if(notification && notification.length > 0){
+    return res.status(200).send({msg: 'data ', data: notification, status: true})
+  } else {
+    return res.status(200).send({msg: 'data not found', data: notification, status: false})
+  }
 })
 
 

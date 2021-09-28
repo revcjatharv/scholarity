@@ -1,4 +1,6 @@
 import app from './app';
+const dotenv = require('dotenv');
+dotenv.config();
 const server = require('http').createServer(app);
 const socket =  require('socket.io')
 import { APP_PORT } from "./utilities/secrets";
@@ -31,22 +33,23 @@ io.on('connection', (socket:any)=>{
     const {testId} = testDetails
     console.log("startTest test", testId)
 
-    const testList = await TestList.findOne({_id:testId, isConducted: false})
-    const testListData = await TestData.find({testId})
+    const testList = await TestList.findOneAndUpdate({_id:testId, isConducted: false},{$set:{isConducted: true}})
     console.log("testList", testList)
-
-    for (let index = 1; index <= testList.totalQuestions; index++) {
-      if(index===1){
-        console.log( testListData[index-1], " testListData[index-1]", new Date())
-        socket.to(testId).emit('testQuestion', testListData[index-1])
-      } else {
-        setTimeout(()=>{
+    if(testList){
+      const testListData = await TestData.find({testId})
+      for (let index = 1; index <= testList.totalQuestions; index++) {
+        if(index===1){
           console.log( testListData[index-1], " testListData[index-1]", new Date())
           socket.to(testId).emit('testQuestion', testListData[index-1])
-        }, testList.timer*1000*index)
-      }
-
-    };
+        } else {
+          setTimeout(()=>{
+            console.log( testListData[index-1], " testListData[index-1]", new Date())
+            socket.to(testId).emit('testQuestion', testListData[index-1])
+          }, testList.timer*1000*index)
+        }
+  
+      };
+    }
   })
 
   socket.on('endTest', async (testDetails:any) => {
@@ -58,10 +61,7 @@ io.on('connection', (socket:any)=>{
     const testListData = await TestData.find({testId})
     socket.emit('testQuestions', {testListData, testList})
   })
-
-
 })
-
 io.on('disconnect',()=>{
   console.log('Connection closed')
 })

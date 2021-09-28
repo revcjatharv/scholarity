@@ -1,7 +1,9 @@
 import { NextFunction, Request, Response, Router } from 'express';
 import { User } from '../database/models/user.model';
 import IUserTestModel, { UserTest } from '../database/models/user-test-mapping.model';
+import { Notification } from '../database/models/notification.model';
 import { TestList } from '../database/models/test.list.model';
+import { firebaseConfig } from "../utilities/firebaseConfig";
 
 
 const router: Router = Router();
@@ -57,8 +59,6 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
     } else {
       res.send({status: false, msg: 'Balance is low please recharge your account before enrollment'})
     }
-
-
 });
 
 router.post('/updateUserMarks', async (req: Request, res: Response, next: NextFunction) => {
@@ -72,6 +72,91 @@ router.post('/updateUserMarks', async (req: Request, res: Response, next: NextFu
   getUserTestData.qARounds.push(qARounds);
   await getUserTestData.save()
   return res.send({status: true, msg: 'saved', data: {}})
+})
+
+router.post('/sendNotificationToUsersFortest',async (req: Request, res: Response, next: NextFunction) =>{
+  const date = new Date(new Date().toISOString().split('T')[0])
+  const testList = await TestList.find({date})
+  const notification_options = {
+    priority: "high",
+    timeToLive: 60 * 60 * 24
+  };
+  if(testList && testList.length > 0){
+    for (let i = 0; i < testList.length; i++) {
+      const element = testList[i];
+      const timeData = element.testTime.split(':')
+      const timeNow = new Date().toLocaleString(undefined, {timeZone: 'Asia/Kolkata'}).split(',')[1].split(':')
+      if(parseInt(timeData[0]) === parseInt(timeNow[0])){
+        // 5 MIN 
+        const usersInTest = await UserTest.find().populate('userId').populate('testId');
+        if(parseInt(timeData[1])-parseInt(timeNow[1]) < 5 && parseInt(timeData[1])-parseInt(timeNow[1]) > 8 ){
+          for (let k = 0; k < usersInTest.length; k++) {
+            const user:any = usersInTest[k];
+            // send notification to user and save in notification model
+            const message = {
+              notification: {
+                title: "Test Starting Soon",
+                body: "Please be online. Test will be starting soon within 5 minutes"
+            }
+            }
+            if(user && user.userId.firebaseToken){
+              firebaseConfig.admin.messaging().sendToDevice(user.userId.firebaseToken, message, notification_options)
+              .then( async (response:any) => {
+              const notification = new Notification({
+                title         : message.notification.title,
+                description   : JSON.stringify(message),
+                body          : JSON.stringify(req.body),
+                link          : '',
+                imageLink     : '',
+                userId        : user.userId.id || user.userId._id,
+              })
+              await notification.save()
+              })
+              .catch( (error:any) => {
+              });
+            } 
+            
+          }
+        }
+        // 1 MIN
+        if(parseInt(timeData[1])-parseInt(timeNow[1]) < 1 && parseInt(timeData[1])-parseInt(timeNow[1]) > 3 ){
+          for (let k = 0; k < usersInTest.length; k++) {
+            const user:any = usersInTest[k];
+            // send notification to user and save in notification model
+            const message = {
+              notification: {
+                title: "Test Starting Soon",
+                body: "Please be online. Test will be starting soon within a minutes"
+            }
+            }
+            if(user && user.userId.firebaseToken){
+              firebaseConfig.admin.messaging().sendToDevice(user.userId.firebaseToken, message, notification_options)
+              .then( async (response:any) => {
+              const notification = new Notification({
+                title         : message.notification.title,
+                description   : JSON.stringify(message),
+                body          : JSON.stringify(req.body),
+                link          : '',
+                imageLink     : '',
+                userId        : user.userId.id || user.userId._id,
+              })
+              await notification.save()
+              
+              })
+              .catch( (error:any) => {
+              });
+            } 
+            
+          }
+        }
+
+      }
+    }
+
+    res.send('notification sent')
+  } else {
+    res.send('No test for today')
+  }
 })
 
 router.post('/getWinner', async (req: Request, res: Response, next: NextFunction) => {
