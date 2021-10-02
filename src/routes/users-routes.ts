@@ -12,6 +12,8 @@ import { firebaseConfig } from "../utilities/firebaseConfig";
 import { payment } from '../utilities/payment';
 import ITestModel, { TestList } from '../database/models/test.list.model';
 import ITestDataModel, { TestData } from '../database/models/test.data.model';
+const fs = require('fs')
+
 
 require('dotenv').config();
 
@@ -292,6 +294,29 @@ router.post('/users/login', async (req: Request, res: Response, next: NextFuncti
 
 });
 
+function extractAsCSV(users: any[], balance: number) {
+
+  console.log("inputData>>>>>>>")
+  const header = ["\nUsername,Email,MobileNumber,FullName,Balance,AccountDetail,PanImage"];
+  const rows = users.map(user =>
+     `${user.username},${user.email},${user.mobileNumber},${user.fullName},${balance},${JSON.stringify(user.wallet.additionalData)},${user.panCardImage}`
+  );
+  return header.concat(rows).join("\n");
+}
+
+function writeToCSVFile(users:any[], balance:number) {
+  console.log("I am in writeToCSVFile",users)
+  const filename = 'output_'+new Date().toISOString().split('T')[0]+'.csv';
+  fs.appendFile(filename, extractAsCSV(users, balance), (err:any) => {
+    if (err) {
+      console.log('Error writing to csv file', err);
+    } else {
+      console.log(`saved as ${filename}`);
+    }
+  });
+}
+
+
 router.post('/requestPrizeMoney', async (req: Request, res: Response, next: NextFunction) => {
   const {balance, userId, accountData, panCardImage}  = req?.body;
   if(!panCardImage ||  !userId || !balance || !accountData){
@@ -299,13 +324,14 @@ router.post('/requestPrizeMoney', async (req: Request, res: Response, next: Next
 
   }
   const getUser = await User.findById(userId);
-  if(getUser.wallet.balance > balance){
-    // send the money to a user by razor pay
-    // TBD
+  if(getUser.wallet.balance >= balance){
     getUser.wallet.balance =getUser.wallet.balance-balance;
     getUser.panCardImage = panCardImage;
     getUser.wallet.additionalData = accountData
-    const saveUser =  await getUser.save();
+    const saveUser =  await User.findOneAndUpdate({_id: getUser._id},{$set: {panCardImage:panCardImage, wallet: getUser.wallet }});
+    // make a csv file 
+    // const users = [];
+    writeToCSVFile([saveUser], balance)
     res.send({status: true, msg:'User saved with new balance', data: {saveUser}})
   }else{
     return res.send({status: false, msg: 'Please request money less than or equal to what you have in your wallet balance'})
