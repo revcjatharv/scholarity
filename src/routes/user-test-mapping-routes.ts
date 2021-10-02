@@ -186,7 +186,7 @@ router.post('/getWinner', async (req: Request, res: Response, next: NextFunction
   let getUserTestDataPerUser = null;
 
   if (testId) {
-    getUserTestData = await UserTest.find({ testId }).populate('userId').populate('testId').sort({ totalMarks: 'asc' }).limit(250);
+    getUserTestData = await UserTest.find({ testId }).populate('userId').populate('testId').sort({ totalMarks: -1 }).limit(250);
 
     for (let i = 0; i < getUserTestData.length; i++) {
       const element = getUserTestData[i];
@@ -307,11 +307,11 @@ router.post('/getWinner', async (req: Request, res: Response, next: NextFunction
       await UserTest.updateOne({_id: element._id}, {$set: {winAmount: amount}})
 
     }
-    getUserTestData = await UserTest.find({ testId }).populate('userId').populate('testId').sort({ totalMarks: 'asc' }).limit(250);
+    getUserTestData = await UserTest.find({ testId }).populate('userId').populate('testId').sort({ totalMarks: -1 }).limit(250);
 
   }
   if (userId) {
-    getUserTestDataPerUser = await UserTest.find({ userId, testId }).populate('userId').populate('testId').sort({ totalMarks: 'asc' }).limit(250);
+    getUserTestDataPerUser = await UserTest.find({ userId, testId }).populate('userId').populate('testId').sort({ totalMarks: -1 }).limit(250);
     for (let i = 0; i < getUserTestDataPerUser.length; i++) {
       const element = getUserTestData[i];
       let amount = 0;
@@ -430,7 +430,7 @@ router.post('/getWinner', async (req: Request, res: Response, next: NextFunction
       await UserTest.updateOne({_id: element._id}, {$set: {winAmount: amount}})
 
     }
-    getUserTestDataPerUser = await UserTest.find({ userId, testId }).populate('userId').populate('testId').sort({ totalMarks: 'asc' }).limit(250);
+    getUserTestDataPerUser = await UserTest.find({ userId, testId }).populate('userId').populate('testId').sort({ totalMarks: -1 }).limit(250);
   }
 
   return res.send({ getUserTestData, getUserTestDataPerUser })
