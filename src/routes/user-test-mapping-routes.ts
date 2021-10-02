@@ -48,14 +48,19 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
   const test = await TestList.findById(testId)
 
   if (user && user.wallet && user.wallet.balance >= test.entryFee) {
-    user.wallet.balance = user.wallet.balance - test.entryFee
-    await user.save()
+    
+    console.log("user is coming here====>",user, "===========",test)
     console.log("userTest", userTest)
-    await UserTest.findOneAndUpdate({ testId, userId }, userTest, { upsert: true }).then(response => {
+    await UserTest.findOneAndUpdate({ testId, userId }, userTest, { upsert: true }).then(async (response) => {
       if (response) {
         return res.send({ status: false, msg: 'User has already registred with test.' })
       }
-      res.send({ status: true, msg: 'Registred for the test succssefully' })
+       user.wallet.balance = user.wallet.balance - test.entryFee
+
+      await User.updateOne({_id: userId}, {$set:{
+        wallet: user.wallet
+      }})
+      return res.send({ status: true, msg: 'Registred for the test succssefully' })
     }).catch(next);
   } else {
     res.send({ status: false, msg: 'Balance is low please recharge your account before enrollment' })
