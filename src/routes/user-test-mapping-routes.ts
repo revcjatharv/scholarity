@@ -42,8 +42,11 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
     testId = ''
   } = req?.body
 
-  userTest.userId = userId
-  userTest.testId = testId
+  userTest.userId = userId;
+  userTest.testId = testId;
+  userTest.qARounds = [];
+  userTest.totalMarks = 0;
+  userTest.winAmount = 0;
   const user = await User.findById(userId);
   const test = await TestList.findById(testId)
 
