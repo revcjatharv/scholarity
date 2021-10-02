@@ -12,6 +12,10 @@ const TestListSchema = new Schema({
     isConducted: {
         type: Schema.Types.Boolean
     },
+    isTestStarted: {
+        type: Schema.Types.Boolean,
+        default: false
+    },
     testType: {
         type: Schema.Types.String,
         enum: ['UPSC', 'NEET', 'IIT', 'CA', 'AIIMS', 'GATE', 'NDA']
@@ -51,6 +55,7 @@ TestListSchema.methods.toAuthJSON = function (): any {
         id: this._id,
         date: this.date,
         isConducted: this.isConducted,
+        isTestStarted: this.isTestStarted,
         testName: this.testName,
         testDescription: this.testDescription,
         testTime: this.testTime,

@@ -29,6 +29,7 @@ router.post('/testList', (req: Request, res: Response, next: NextFunction) => {
     const {
         date= new Date(),
         isConducted= false,
+        isTestStarted=false,
         testName= '',
         testDescription= '',
         testType=  '',
@@ -43,6 +44,7 @@ router.post('/testList', (req: Request, res: Response, next: NextFunction) => {
     
     testList.date = new Date(date);
     testList.isConducted  = isConducted
+    testList.isTestStarted = isTestStarted
     testList.testName  = testName
     testList.testDescription = testDescription
     testList.testType=testType

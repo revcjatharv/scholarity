@@ -33,7 +33,7 @@ io.on('connection', (socket:any)=>{
     const {testId} = testDetails
     console.log("startTest test", testId)
 
-    const testList = await TestList.findOneAndUpdate({_id:testId, isConducted: false},{$set:{isConducted: true}})
+    const testList = await TestList.findOneAndUpdate({_id:testId, isTestStarted: false},{$set:{isTestStarted: true}})
     console.log("testList", testList)
     if(testList){
       const testListData = await TestData.find({testId})

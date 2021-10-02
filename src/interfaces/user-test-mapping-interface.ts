@@ -3,7 +3,8 @@ export interface IUserTest {
     userId : string,
     testId: string,
     qARounds: qARounds [],
-    totalMarks: number
+    totalMarks: number,
+    winAmount: number
 }
 
 export interface qARounds {
