@@ -262,7 +262,11 @@ router.post('/getNotificationPerUser', async (req:Request, res: Response, next: 
 router.post('/users/login', async (req: Request, res: Response, next: NextFunction) => {
   if(req.body.user.firebaseToken && req.body.user.email){
     const user = await User.findOne({email:req.body.user.email })
-    user.firebaseToken  = req.body.user.firebaseToken
+    if(user){
+      user.firebaseToken  = req.body.user.firebaseToken
+    } else {
+      return res.status(422).json({status: false, msg: 'User not found. Invalid creds'});
+    }
   }
   if (!req.body.user.email) {
     return res.status(422).json({errors: {email: "Can't be blank"}});

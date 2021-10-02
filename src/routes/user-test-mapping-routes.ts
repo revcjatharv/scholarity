@@ -190,241 +190,249 @@ router.post('/getWinner', async (req: Request, res: Response, next: NextFunction
 
     for (let i = 0; i < getUserTestData.length; i++) {
       const element = getUserTestData[i];
+      let amount = 0;
+      console.log("ELEMENT=======>", element)
       const testData: any = element.testId;
-      if (testData.testName.indexOf('micro') > -1) {
+      if (testData.testName.toLowerCase().indexOf('micro') > -1) {
         if (i === 0) {
-          element.winAmount = 1000
+          amount = 1000
         }
         else if (i === 1) {
-          element.winAmount = 500
+          amount = 500
         }
         else if (i === 2) {
-          element.winAmount = 250
+          amount = 250
         }
         else if (i >= 3 && i <= 49) {
-          element.winAmount = 45
+          amount = 45
         }
         else if (i >= 50 && i <= 149) {
-          element.winAmount = 25
+          amount = 25
         }
         else if (i >= 150 && i <= 249) {
-          element.winAmount = 15
+          amount = 15
         } else {
-          element.winAmount = 0
+          amount = 0
         }
 
       } else if (testData.testName.toLowerCase().indexOf('mini') > -1) {
         if (i === 0) {
-          element.winAmount = 2500
+          amount = 2500
         }
         else if (i === 1) {
-          element.winAmount = 1000
+          amount = 1000
         }
         else if (i === 2) {
-          element.winAmount = 500
+          amount = 500
         }
         else if (i >= 3 && i <= 49) {
-          element.winAmount = 100
+          amount = 100
         }
         else if (i >= 50 && i <= 149) {
-          element.winAmount = 50
+          amount = 50
         }
         else if (i >= 150 && i <= 249) {
-          element.winAmount = 30
+          amount = 30
         }
         else {
-          element.winAmount = 0
+          amount = 0
         }
       } else if (testData.testName.toLowerCase().indexOf('ultra') > -1) {
         if (i === 0) {
-          element.winAmount = 5000
+          amount = 5000
         }
         else if (i === 1) {
-          element.winAmount = 2500
+          amount = 2500
         }
         else if (i === 2) {
-          element.winAmount = 1000
+          amount = 1000
         }
         else if (i >= 3 && i <= 49) {
-          element.winAmount = 250
+          amount = 250
         }
         else if (i >= 50 && i <= 149) {
-          element.winAmount = 100
+          amount = 100
         }
         else if (i >= 150 && i <= 249) {
-          element.winAmount = 75
+          amount = 75
         }
         else {
-          element.winAmount = 0
+          amount = 0
         }
       } else if (testData.testName.toLowerCase().indexOf('epic') > -1) {
         if (i === 0) {
-          element.winAmount = 15000
+          amount = 15000
         }
         else if (i === 1) {
-          element.winAmount = 7500
+          amount = 7500
         }
         else if (i === 2) {
-          element.winAmount = 5000
+          amount = 5000
         }
         else if (i >= 3 && i <= 49) {
-          element.winAmount = 500
+          amount = 500
         }
         else if (i >= 50 && i <= 149) {
-          element.winAmount = 350
+          amount = 350
         }
         else if (i >= 150 && i <= 249) {
-          element.winAmount = 200
+          amount = 200
         }
         else {
-          element.winAmount = 0
+          amount = 0
         }
       } else if (testData.testName.toLowerCase().indexOf('jumbo') > -1) {
         if (i === 0) {
-          element.winAmount = 25000
+          amount = 25000
         }
         else if (i === 1) {
-          element.winAmount = 12500
+          amount = 12500
         }
         else if (i === 2) {
-          element.winAmount = 7500
+          amount = 7500
         }
         else if (i >= 3 && i <= 49) {
-          element.winAmount = 1250
+          amount = 1250
         }
         else if (i >= 50 && i <= 149) {
-          element.winAmount = 500
+          amount = 500
         }
         else if (i >= 150 && i <= 249) {
-          element.winAmount = 350
+          amount = 350
         }
         else {
-          element.winAmount = 0
+          amount = 0
         }
       }
-      await element.save()
+      await UserTest.updateOne({_id: element._id}, {$set: {winAmount: amount}})
 
     }
+    getUserTestData = await UserTest.find({ testId }).populate('userId').populate('testId').sort({ totalMarks: 'asc' }).limit(250);
+
   }
   if (userId) {
     getUserTestDataPerUser = await UserTest.find({ userId, testId }).populate('userId').populate('testId').sort({ totalMarks: 'asc' }).limit(250);
     for (let i = 0; i < getUserTestDataPerUser.length; i++) {
       const element = getUserTestData[i];
+      let amount = 0;
       const testData: any = element.testId;
-      if (testData.testName.indexOf('micro') > -1) {
+      if (testData.testName.toLowerCase().indexOf('micro') > -1) {
         if (i === 0) {
-          element.winAmount = 1000
+          amount = 1000
         }
         else if (i === 1) {
-          element.winAmount = 500
+          amount = 500
         }
         else if (i === 2) {
-          element.winAmount = 250
+          amount = 250
         }
         else if (i >= 3 && i <= 49) {
-          element.winAmount = 45
+          amount = 45
         }
         else if (i >= 50 && i <= 149) {
-          element.winAmount = 25
+          amount = 25
         }
         else if (i >= 150 && i <= 249) {
-          element.winAmount = 15
+          amount = 15
         } else {
-          element.winAmount = 0
+          amount = 0
         }
 
       } else if (testData.testName.toLowerCase().indexOf('mini') > -1) {
         if (i === 0) {
-          element.winAmount = 2500
+          amount = 2500
         }
         else if (i === 1) {
-          element.winAmount = 1000
+          amount = 1000
         }
         else if (i === 2) {
-          element.winAmount = 500
+          amount = 500
         }
         else if (i >= 3 && i <= 49) {
-          element.winAmount = 100
+          amount = 100
         }
         else if (i >= 50 && i <= 149) {
-          element.winAmount = 50
+          amount = 50
         }
         else if (i >= 150 && i <= 249) {
-          element.winAmount = 30
+          amount = 30
         }
         else {
-          element.winAmount = 0
+          amount = 0
         }
       } else if (testData.testName.toLowerCase().indexOf('ultra') > -1) {
         if (i === 0) {
-          element.winAmount = 5000
+          amount = 5000
         }
         else if (i === 1) {
-          element.winAmount = 2500
+          amount = 2500
         }
         else if (i === 2) {
-          element.winAmount = 1000
+          amount = 1000
         }
         else if (i >= 3 && i <= 49) {
-          element.winAmount = 250
+          amount = 250
         }
         else if (i >= 50 && i <= 149) {
-          element.winAmount = 100
+          amount = 100
         }
         else if (i >= 150 && i <= 249) {
-          element.winAmount = 75
+          amount = 75
         }
         else {
-          element.winAmount = 0
+          amount = 0
         }
       } else if (testData.testName.toLowerCase().indexOf('epic') > -1) {
         if (i === 0) {
-          element.winAmount = 15000
+          amount = 15000
         }
         else if (i === 1) {
-          element.winAmount = 7500
+          amount = 7500
         }
         else if (i === 2) {
-          element.winAmount = 5000
+          amount = 5000
         }
         else if (i >= 3 && i <= 49) {
-          element.winAmount = 500
+          amount = 500
         }
         else if (i >= 50 && i <= 149) {
-          element.winAmount = 350
+          amount = 350
         }
         else if (i >= 150 && i <= 249) {
-          element.winAmount = 200
+          amount = 200
         }
         else {
-          element.winAmount = 0
+          amount = 0
         }
       } else if (testData.testName.toLowerCase().indexOf('jumbo') > -1) {
         if (i === 0) {
-          element.winAmount = 25000
+          amount = 25000
         }
         else if (i === 1) {
-          element.winAmount = 12500
+          amount = 12500
         }
         else if (i === 2) {
-          element.winAmount = 7500
+          amount = 7500
         }
         else if (i >= 3 && i <= 49) {
-          element.winAmount = 1250
+          amount = 1250
         }
         else if (i >= 50 && i <= 149) {
-          element.winAmount = 500
+          amount = 500
         }
         else if (i >= 150 && i <= 249) {
-          element.winAmount = 350
+          amount = 350
         }
         else {
-          element.winAmount = 0
+          amount = 0
         }
       }
-      await element.save()
+      await UserTest.updateOne({_id: element._id}, {$set: {winAmount: amount}})
+
     }
+    getUserTestDataPerUser = await UserTest.find({ userId, testId }).populate('userId').populate('testId').sort({ totalMarks: 'asc' }).limit(250);
   }
+
   return res.send({ getUserTestData, getUserTestDataPerUser })
 })
 
