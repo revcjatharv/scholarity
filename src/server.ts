@@ -40,11 +40,14 @@ io.on('connection', (socket:any)=>{
       for (let index = 1; index <= testList.totalQuestions; index++) {
         if(index===1){
           console.log( testListData[index-1], " testListData[index-1]", new Date())
-          socket.to(testId).emit('testQuestion', testListData[index-1])
+          io.in(testId).emit('testQuestion', testListData[index-1]);
+          // socket.to(testId).broadcast.emit('testQuestion', testListData[index-1])
         } else {
           setTimeout(()=>{
             console.log( testListData[index-1], " testListData[index-1]", new Date())
-            socket.to(testId).emit('testQuestion', testListData[index-1])
+          io.in(testId).emit('testQuestion', testListData[index-1]);
+
+            // socket.to(testId).broadcast.emit('testQuestion', testListData[index-1])
           }, testList.timer*1000*index)
         }
   
