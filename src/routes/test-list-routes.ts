@@ -16,7 +16,7 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
     const time = new Date().toISOString().split('T')[1].split('.')[0];
     const { testType, userId }:any = req?.body
     console.log(date,time,testType)
-    let testList = await TestList.find({date: {$gte: date}, testType})
+    let testList = await TestList.find({date: {$gte: date}, testType, isConducted: false})
     let resultsFromUserEnroll:any = await UserTest
     .find({ userId }).populate('userId').populate('testId');
     const newtestList = []

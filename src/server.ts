@@ -56,9 +56,7 @@ io.on('connection', (socket:any)=>{
 
   socket.on('endTest', async (testDetails:any) => {
     const {testId} = testDetails
-    const testList = await TestList.findOne({testId});
-    testList.isConducted = true;
-    await testList.save();
+    const testList = await TestList.findOneAndUpdate({_id:testId, isConducted: false},{$set:{isConducted: true}})
     console.log("end test hasa been called",testList)
     const testListData = await TestData.find({testId})
     socket.emit('testQuestions', {testListData, testList})
