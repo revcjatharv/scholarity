@@ -22,7 +22,7 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
     const newtestList = []
     for (let i = 0; i < testList.length; i++) {
       const element : any= testList[i];
-      const isPresent = resultsFromUserEnroll.find((x:any )=> x.testId.id === element.id)
+      const isPresent = resultsFromUserEnroll.find((x:any )=> x && x.testId && x.testId.id === element.id)
       const newElem = {...element._doc}
       newElem.hasEnrolled  = isPresent ? true :false
       newtestList.push(newElem)
