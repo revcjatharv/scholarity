@@ -98,7 +98,7 @@ router.post('/sendNotificationToUsersFortest', async (req: Request, res: Respons
         for (let i = 0; i < testList.length; i++) {
           const element = testList[i];
           const timeData = element.testTime.split(':')
-          const timeNow = new Date().toLocaleString(undefined, { timeZone: 'Asia/Kolkata' }).split(',')[1].split(':')
+          const timeNow = new Date().toLocaleString(undefined, { timeZone: 'Asia/Kolkata', hour12: false }).split(',')[1].split(':')
           console.log("test list time ",timeData)
           console.log("time i see now", timeNow)
           
