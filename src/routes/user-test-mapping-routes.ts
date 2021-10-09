@@ -112,7 +112,7 @@ router.post('/sendNotificationToUsersFortest', async (req: Request, res: Respons
             // 5 MIN 
             const usersInTest = await UserTest.find({testId: element.id}).populate('userId').populate('testId');
             console.log("User in Test",usersInTest )
-            if (parseInt(timeData[1]) - parseInt(timeNow[1]) < 5 && parseInt(timeData[1]) - parseInt(timeNow[1]) > 8) {
+            if (parseInt(timeData[1]) - parseInt(timeNow[1]) < 5 && parseInt(timeData[1]) - parseInt(timeNow[1]) > 1) {
               for (let k = 0; k < usersInTest.length; k++) {
                 const user: any = usersInTest[k];
                 // send notification to user and save in notification model
@@ -148,7 +148,7 @@ router.post('/sendNotificationToUsersFortest', async (req: Request, res: Respons
               }
             }
             // 1 MIN
-            if (parseInt(timeData[1]) - parseInt(timeNow[1]) < 1 && parseInt(timeData[1]) - parseInt(timeNow[1]) > 3) {
+            if (parseInt(timeData[1]) - parseInt(timeNow[1]) < 1 && parseInt(timeData[1]) - parseInt(timeNow[1]) > 0) {
               for (let k = 0; k < usersInTest.length; k++) {
                 const user: any = usersInTest[k];
                 // send notification to user and save in notification model
