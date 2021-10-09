@@ -3,6 +3,7 @@ import { authentication } from '../utilities/authentication';
 
 import ITestModel, { TestList } from '../database/models/test.list.model';
 import { testType } from '../utilities/secrets';
+import { UserTest } from '../database/models/user-test-mapping.model';
 const router: Router = Router();
 
 
@@ -10,16 +11,25 @@ router.get('/getTestType', (req: Request, res: Response, next: NextFunction) => 
   res.send({...testType})
 })
 
-router.post('/', (req: Request, res: Response, next: NextFunction) => {
+router.post('/', async (req: Request, res: Response, next: NextFunction) => {
     const date = new Date(new Date().toISOString().split('T')[0])
     const time = new Date().toISOString().split('T')[1].split('.')[0];
-    const { testType }:any = req?.body
+    const { testType, userId }:any = req?.body
     console.log(date,time,testType)
-    TestList
-      .find({date: {$gte: date}, testType}).then((testList)=>{
-          res.send({testList})
-      })
-      .catch(next);
+    let testList = await TestList.find({date: {$gte: date}, testType})
+    let resultsFromUserEnroll:any = await UserTest
+    .find({ userId }).populate('userId').populate('testId');
+    const newtestList = []
+    for (let i = 0; i < testList.length; i++) {
+      const element : any= testList[i];
+      const isPresent = resultsFromUserEnroll.find((x:any )=> x.testId.id === element.id)
+      const newElem = {...element._doc}
+      newElem.hasEnrolled  = isPresent ? true :false
+      newtestList.push(newElem)
+    }
+
+    return res.send({status: true, data: newtestList})
+
 });
 
 
