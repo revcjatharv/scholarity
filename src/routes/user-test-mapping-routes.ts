@@ -105,10 +105,6 @@ router.post('/sendNotificationToUsersFortest', async (req: Request, res: Respons
           if (parseInt(timeData[0]) === parseInt(timeNow[0])) {
             console.log(" 0 Came in 5 Min test list ",parseInt(timeData[0]))
             console.log("0 Cam in 5 min now", parseInt(timeNow[0]))
-
-
-            console.log("Came in 5 Min test list ",parseInt(timeData[1]))
-            console.log("Cam in 5 min now", parseInt(timeNow[1]))
             // 5 MIN 
             const usersInTest = await UserTest.find({testId: element.id}).populate('userId').populate('testId');
             console.log("User in Test",usersInTest )
