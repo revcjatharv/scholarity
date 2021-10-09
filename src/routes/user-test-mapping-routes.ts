@@ -99,7 +99,16 @@ router.post('/sendNotificationToUsersFortest', async (req: Request, res: Respons
           const element = testList[i];
           const timeData = element.testTime.split(':')
           const timeNow = new Date().toLocaleString(undefined, { timeZone: 'Asia/Kolkata' }).split(',')[1].split(':')
+          console.log("test list time ",timeData)
+          console.log("time i see now", timeNow)
+          
           if (parseInt(timeData[0]) === parseInt(timeNow[0])) {
+            console.log(" 0 Came in 5 Min test list ",parseInt(timeData[0]))
+            console.log("0 Cam in 5 min now", parseInt(timeNow[0]))
+
+
+            console.log("Came in 5 Min test list ",parseInt(timeData[1]))
+            console.log("Cam in 5 min now", parseInt(timeNow[1]))
             // 5 MIN 
             const usersInTest = await UserTest.find().populate('userId').populate('testId');
             if (parseInt(timeData[1]) - parseInt(timeNow[1]) < 5 && parseInt(timeData[1]) - parseInt(timeNow[1]) > 8) {
@@ -112,7 +121,9 @@ router.post('/sendNotificationToUsersFortest', async (req: Request, res: Respons
                     body: "Please be online. Test will be starting soon within 5 minutes"
                   }
                 }
+                console.log("user.userId.firebaseToken in 5 min",user.userId.firebaseToken)
                 if (user && user.userId.firebaseToken) {
+                  console.log("In Firebase token")
                   firebaseConfig.admin.messaging().sendToDevice(user.userId.firebaseToken, message, notification_options)
                     .then(async (response: any) => {
                       const notification = new Notification({
@@ -146,6 +157,7 @@ router.post('/sendNotificationToUsersFortest', async (req: Request, res: Respons
                     body: "Please be online. Test will be starting soon within a minutes"
                   }
                 }
+                console.log("user.userId.firebaseToken in 1 min",user.userId.firebaseToken)
                 if (user && user.userId.firebaseToken) {
                   firebaseConfig.admin.messaging().sendToDevice(user.userId.firebaseToken, message, notification_options)
                     .then(async (response: any) => {
