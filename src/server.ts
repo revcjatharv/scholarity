@@ -39,7 +39,7 @@ io.on('connection', (socket:any)=>{
       const testListData = await TestData.find({testId})
       for (let index = 1; index <= testList.totalQuestions; index++) {
         if(index===1){
-          console.log( testListData[index-1], " testListData[index-1]", new Date())
+          console.log( {data: testListData[index-1], questionNumber: index}, " testListData[index-1]", new Date())
           io.in(testId).emit('testQuestion', {data: testListData[index-1], questionNumber: index});
           // socket.to(testId).broadcast.emit('testQuestion', testListData[index-1])
         } else {
