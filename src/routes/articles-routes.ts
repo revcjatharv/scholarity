@@ -1,9 +1,6 @@
 import { Request, Response, Router } from 'express';
-import { authentication } from '../utilities/authentication';
-import { User } from '../database/models/user.model';
 import { Article } from "../database/models/article.model";
 import { Feedback } from "../database/models/feedback.model";
-import { Comment } from "../database/models/comment.model";
 
 const router: Router = Router();
 
@@ -93,7 +90,7 @@ router.get('/feedback', function (req: Request, res: Response, next) {
     Feedback.find({ ...query })
       .limit(Number(limit))
       .skip(Number(offset))
-      .sort({ createdAt: 'desc' })
+      .sort({ createdAt: 'asc' })
       .exec(),
     Feedback.count({ ...query }).exec(),
   ]).then(function (results) {
@@ -112,9 +109,9 @@ router.post('/docs', function (req: Request, res: Response, next){
   const {type} = req.body;
   let url = ''
   if(type === 'refund') {
-    url = 'https://scholaritynew.s3.ap-south-1.amazonaws.com/refund%2Bpolicy+(1).pdf'
+    url = 'https://scholaritynew.s3.ap-south-1.amazonaws.com/5_6217249440550356178.html'
   } else if(type === 'tnc'){
-    url = 'https://scholaritynew.s3.ap-south-1.amazonaws.com/Terms%2Band%2Bcondition%2Bdraft+(1).pdf'
+    url = 'https://scholaritynew.s3.ap-south-1.amazonaws.com/5_6217249440550356177.html'
   } else if (type=== 'privacy'){
     url = 'https://scholaritynew.s3.ap-south-1.amazonaws.com/Privacy%2BPolicy+(1).pdf'
   }
@@ -127,11 +124,6 @@ router.post('/', function (req: Request, res: Response, next) {
     return res.json({ article: article.toJSONFor() });
   });
 });
-
-
-router.post('/', function (req: Request, res: Response, next) {
-
-})
 // return a article
 // router.get('/:article', authentication.optional, function (req: Request, res: Response, next) {
 //   Promise.all([
