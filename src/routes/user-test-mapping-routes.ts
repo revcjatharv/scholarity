@@ -319,7 +319,7 @@ router.post('/getWinner', async (req: Request, res: Response, next: NextFunction
           amount = 0
         }
       }
-      await UserTest.updateOne({_id: element._id}, {$set: {winAmount: amount, rank : i}})
+      await UserTest.updateOne({_id: element._id}, {$set: {winAmount: amount, rank : i+1}})
 
     }
     getUserTestData = await UserTest.find({ testId }).populate('userId').populate('testId').sort({ totalMarks: -1 }).limit(250);
