@@ -50,6 +50,9 @@ io.on('connection', (socket:any)=>{
     if(testList){
       const testListData = await TestData.find({testId})
       for (let index = 1; index <= testList.totalQuestions; index++) {
+        if(index === testList.totalQuestions){
+          await TestList.findOneAndUpdate({_id:testId, isConducted: false},{$set:{isConducted: true}})
+        }
         if(index===1){
           console.log( {data: testListData[index-1], questionNumber: index}, " testListData[index-1]", new Date())
           io.in(testId).emit('testQuestion', {data: testListData[index-1], questionNumber: index, liveConnection: 2});
