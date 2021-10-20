@@ -18,11 +18,8 @@ export const DB             = {
   PORT    : _.defaultTo(parseInt(process.env.DB_PORT), 27017),
 }
 export const testType = {
-  UPSC: 'UPSC',
-  NEET: 'NEET',
-  IIT: 'IIT-JEE',
-  CA: 'CHARTED ACCOUNTANT',
-  AIIMS: 'AIIMS',
-  GATE: 'GRADUATE APTITUDE TEST ENGINEERING',
-  NDA: 'NATIONAL DEFENCE ACADEMY'
+  UPSC: 'UPSC & PCS',
+  IIT: 'IIT JEE',
+  IBPS: 'IBPS PO & other Banking Exams',
+  SSC: 'SSC CGL',
 }

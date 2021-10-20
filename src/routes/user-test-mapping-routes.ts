@@ -15,7 +15,7 @@ router.post('/getTestByUserEmail', async (req: Request, res: Response, next: Nex
   const user = await UserTest
     .find({ userId }).limit(limit).skip(skip).populate('userId').populate('testId')
   const testCount = await UserTest.count({ userId }).exec()
-  return res.send({ user, testCount })
+  return res.send({ user, testCount, maxUserSeat: 1000  })
 });
 
 router.post('/getUserByTestId', async (req: Request, res: Response, next: NextFunction) => {
@@ -24,7 +24,7 @@ router.post('/getUserByTestId', async (req: Request, res: Response, next: NextFu
     .find({ testId }).limit(limit).skip(skip).populate('userId').populate('testId')
 
   const userCount = await UserTest.count({ testId }).exec()
-  return res.send({ user, userCount })
+  return res.send({ user, userCount, maxUserSeat: 1000 })
 });
 
 router.post('/userTestAvl', async (req: Request, res: Response, next: NextFunction) => {

@@ -7,7 +7,7 @@ import { APP_PORT } from "./utilities/secrets";
 import logger from "./utilities/logger";
 import { TestData } from './database/models/test.data.model';
 import { TestList } from './database/models/test.list.model';
-
+let activeUsers :any = {}
 
 server
   .listen(APP_PORT, () => {
@@ -29,6 +29,18 @@ io.on('connection', (socket:any)=>{
     console.log("joined test", testDetails)
     socket.join(testDetails.testId);
   })
+
+  socket.on('activeTestUser', async (testDetails:any)=>{
+    const {userId, testId} = testDetails;
+    if(activeUsers.hasOwnProperty(testId)){
+      activeUsers[testId] = [...activeUsers[testId], userId]
+    }else{
+      activeUsers[testId] = [userId]
+    }
+    io.in(testId).emit('getActiveUser', {totalUser: activeUsers[testId].length, testId})
+  })
+
+
   socket.on('startTest', async (testDetails:any) => {
     const {testId} = testDetails
     console.log("startTest test", testId)
@@ -40,13 +52,11 @@ io.on('connection', (socket:any)=>{
       for (let index = 1; index <= testList.totalQuestions; index++) {
         if(index===1){
           console.log( {data: testListData[index-1], questionNumber: index}, " testListData[index-1]", new Date())
-          io.in(testId).emit('testQuestion', {data: testListData[index-1], questionNumber: index});
-          // socket.to(testId).broadcast.emit('testQuestion', testListData[index-1])
+          io.in(testId).emit('testQuestion', {data: testListData[index-1], questionNumber: index, liveConnection: 2});
         } else {
           setTimeout(()=>{
             console.log( {data: testListData[index-1], questionNumber: index}, " testListData[index-1]", new Date())
-          io.in(testId).emit('testQuestion', {data: testListData[index-1], questionNumber: index});
-            // socket.to(testId).broadcast.emit('testQuestion', testListData[index-1])
+          io.in(testId).emit('testQuestion', {data: testListData[index-1], questionNumber: index, liveConnection: 2});
           }, testList.timer*1000*index)
         }
   
@@ -61,6 +71,7 @@ io.on('connection', (socket:any)=>{
     const testListData = await TestData.find({testId})
     socket.emit('testQuestions', {testListData, testList})
   })
+  
 })
 io.on('disconnect',()=>{
   console.log('Connection closed')
