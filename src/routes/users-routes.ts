@@ -327,6 +327,10 @@ function writeToCSVFile(users:any[], balance:number) {
 
 router.post('/requestPrizeMoney', async (req: Request, res: Response, next: NextFunction) => {
   const {balance, userId, accountData, panCardImage}  = req?.body;
+  if(balance > 30000){
+    return res.send({status: false, msg: 'You can not request for money more than 30000'})
+  }
+  
   if(!panCardImage ||  !userId || !balance || !accountData){
     return res.send({status: false, msg: 'Please review data multiple data missing'})
 

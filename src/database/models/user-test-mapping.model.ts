@@ -26,6 +26,10 @@ const UserTestSchema = new Schema({
     winAmount: {
         type: Schema.Types.Number,
         default: 0
+    },
+    rank: {
+        type: Schema.Types.Number,
+        default: 0
     }
 }, { timestamps: true });
 
@@ -35,7 +39,8 @@ UserTestSchema.methods.toAuthJSON = function (): any {
         testId: this.testId,
         qARounds: this.qARounds,
         totalMarks: this.totalMarks,
-        winAmount: this.winAmount
+        winAmount: this.winAmount,
+        rank: this.rank
     };
 };
 

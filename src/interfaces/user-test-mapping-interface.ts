@@ -4,7 +4,8 @@ export interface IUserTest {
     testId: string,
     qARounds: qARounds [],
     totalMarks: number,
-    winAmount: number
+    winAmount: number,
+    rank: number
 }
 
 export interface qARounds {
