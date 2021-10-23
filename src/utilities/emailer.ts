@@ -35,9 +35,11 @@ async function sendEmails(data:any) {
 }
 
 async function sendOtp(params:any) {
-  console.log('params====',params)
+  console.log("params before", params)
   let  {isVerfied, otp, mobileNumber} = params
   otp  =  Math.floor(1000 + Math.random() * 4000);
+  console.log('params====',isVerfied, otp, mobileNumber)
+
   const checkIfOtpExist: any = await OtpData.findOne().where({mobileNumber}).populate('userId');
   if(checkIfOtpExist) return {status: false, message: 'OTP Already exist. Please try again after sometime'};
   const otpData = new OtpData({isVerfied,otp,mobileNumber })
@@ -57,6 +59,7 @@ async function verfiyOtp(params:any) {
     const checkIfOtpExist = await OtpData.findOneAndDelete().where({mobileNumber, isVerfied: false});
   if(checkIfOtpExist) return {status: true, message: 'OTP succesfully verfied'};
   }
+  console.log("mobileNumber, otp", mobileNumber, otp)
   const checkIfOtpExist = await OtpData.findOneAndDelete().where({mobileNumber, isVerfied: false, otp});
   if(checkIfOtpExist) return {status: true, message: 'OTP succesfully verfied'};
   return {status: false, message: 'Failed to verify the OTP. Please try again later'}
