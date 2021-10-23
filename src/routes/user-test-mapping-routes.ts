@@ -206,7 +206,6 @@ router.post('/getWinner', async (req: Request, res: Response, next: NextFunction
     for (let i = 0; i < getUserTestData.length; i++) {
       const element = getUserTestData[i];
       let amount = 0;
-      console.log("ELEMENT=======>", element)
       const testData: any = element.testId;
       if (testData.testName.toLowerCase().indexOf('micro') > -1) {
         if (i === 0) {

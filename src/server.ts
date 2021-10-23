@@ -31,12 +31,16 @@ io.on('connection', (socket:any)=>{
   })
 
   socket.on('activeTestUser', async (testDetails:any)=>{
+    console.log("Came in active user",testDetails )
     const {userId, testId} = testDetails;
     if(activeUsers.hasOwnProperty(testId)){
       activeUsers[testId] = [...activeUsers[testId], userId]
     }else{
       activeUsers[testId] = [userId]
     }
+
+    console.log("activeUsers counts",activeUsers[testId].length )
+
     io.in(testId).emit('getActiveUser', {totalUser: activeUsers[testId].length, testId})
   })
 
