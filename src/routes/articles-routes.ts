@@ -117,7 +117,7 @@ router.post('/docs', function (req: Request, res: Response, next){
   if(type === 'refund') {
     url = 'https://scholaritynew.s3.ap-south-1.amazonaws.com/5_6217249440550356178.html'
   } else if(type === 'tnc'){
-    url = 'https://scholaritynew.s3.ap-south-1.amazonaws.com/5_6217249440550356177.html'
+    url = 'https://scholaritynew.s3.ap-south-1.amazonaws.com/t+%26+c+final.html'
   } else if (type=== 'privacy'){
     url = 'https://scholaritynew.s3.ap-south-1.amazonaws.com/Privacy%2BPolicy+(1).pdf'
   }
