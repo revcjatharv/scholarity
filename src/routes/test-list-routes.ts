@@ -75,7 +75,7 @@ router.post('/testList', (req: Request, res: Response, next: NextFunction) => {
 });
 
 router.post('/getFreetest', async (req: Request, res: Response, next: NextFunction) => {
-  const list = [
+  const list = [{
     "timer" : 25.0,
     "testName" : "Free test",
     "testDescription" : "Its a Free UPSC Test",
@@ -83,7 +83,7 @@ router.post('/getFreetest', async (req: Request, res: Response, next: NextFuncti
     "totalQuestions" : 10.0,
     "entryFee" : 0.0,
     "instruction" : "<ul>Select the option and click the submit button to successfully submit your answer.<ul><br> 30% TDS applicable to all the prizes more ₹10,<ul><br> Prizes are subject to the user agreement and other terms &amp; conditions. Please read them carefully. <ul><br> Amount of Rewards is subject to change if the total seats are not filled before 30 minutes of the test. Users would be notified accordingly.<ul><br> *Terms &amp; Conditions apply",
-    "__v" : 0.0,
+    "__v" : 0.0,}
   ]
 
   const questionsAndAnswer: any[] = [
