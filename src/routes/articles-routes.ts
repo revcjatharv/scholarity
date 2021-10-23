@@ -48,6 +48,12 @@ router.get('/getArticleType', async function (req: Request, res: Response, next)
     types.splice(HOME_PAGE, 1);
   }
 
+  const PREPARE = types.indexOf('PREPARE');
+  if (PREPARE > -1) {
+    types.splice(PREPARE, 1);
+  }
+
+
   const WALLET = types.indexOf('WALLET');
   if (WALLET > -1) {
     types.splice(WALLET, 1);

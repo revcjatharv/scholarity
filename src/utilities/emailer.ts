@@ -39,7 +39,6 @@ async function sendOtp(params:any) {
   let  {isVerfied, otp, mobileNumber} = params
   otp  =  Math.floor(1000 + Math.random() * 4000);
   console.log('params====',isVerfied, otp, mobileNumber)
-
   const checkIfOtpExist: any = await OtpData.findOne().where({mobileNumber}).populate('userId');
   if(checkIfOtpExist) return {status: false, message: 'OTP Already exist. Please try again after sometime'};
   const otpData = new OtpData({isVerfied,otp,mobileNumber })
