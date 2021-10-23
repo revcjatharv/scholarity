@@ -77,7 +77,7 @@ router.post('/testList', (req: Request, res: Response, next: NextFunction) => {
 router.post('/getFreetest', async (req: Request, res: Response, next: NextFunction) => {
   const list = [{
     "timer": 25.0,
-    "testName": "Free test",
+    "testName": "Free Mock test",
     "testDescription": "Its a Free UPSC Test",
     "testType": "UPSC",
     "totalQuestions": 10.0,
