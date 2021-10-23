@@ -7,6 +7,8 @@ import { APP_PORT } from "./utilities/secrets";
 import logger from "./utilities/logger";
 import { TestData } from './database/models/test.data.model';
 import { TestList } from './database/models/test.list.model';
+import { UserTest } from './database/models/user-test-mapping.model';
+import { User } from './database/models/user.model';
 let activeUsers :any = {}
 
 server
@@ -56,6 +58,13 @@ io.on('connection', (socket:any)=>{
       for (let index = 1; index <= testList.totalQuestions; index++) {
         setTimeout(async () => {
           await TestList.findOneAndUpdate({_id:testId, isConducted: false},{$set:{isConducted: true}})
+          const findUserTest = await UserTest.find({ testId }).populate('userId').populate('testId').sort({ totalMarks: -1 }).limit(250);
+          for (let index = 0; index < findUserTest.length; index++) {
+            const element = findUserTest[index];
+            const userDetail:any = element.userId
+            userDetail.wallet.balance = userDetail.wallet.balance+element.winAmount
+            await User.updateOne({_id: userDetail.id}, {$set: {wallet: userDetail.wallet}})
+          }
         }, testList.timer*1000*testList.totalQuestions);
         if(index===1){
           console.log( {data: testListData[index-1], questionNumber: index}, " testListData[index-1]", new Date())

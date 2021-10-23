@@ -319,9 +319,6 @@ router.post('/getWinner', async (req: Request, res: Response, next: NextFunction
         }
       }
       await UserTest.updateOne({_id: element._id}, {$set: {winAmount: amount, rank : i+1}})
-      const userDetail:any = element.userId
-      userDetail.wallet.balance = userDetail.wallet.balance+amount
-      await User.updateOne({_id: userDetail.id}, {$set: {wallet: userDetail.wallet}})
     }
     getUserTestData = await UserTest.find({ testId }).populate('userId').populate('testId').sort({ totalMarks: -1 }).limit(250);
 
@@ -444,9 +441,6 @@ router.post('/getWinner', async (req: Request, res: Response, next: NextFunction
         }
       }
       await UserTest.updateOne({_id: element._id}, {$set: {winAmount: amount, rank : i+1}})
-      const userDetail:any = element.userId
-      userDetail.wallet.balance = userDetail.wallet.balance+amount
-      await User.updateOne({_id: userDetail.id}, {$set: {wallet: userDetail.wallet}})
     }
     getUserTestDataPerUser = await UserTest.find({ userId, testId }).populate('userId').populate('testId').sort({ totalMarks: -1 }).limit(250);
   }
