@@ -54,18 +54,12 @@ io.on('connection', (socket:any)=>{
     console.log("startTest test", testId)
 
     const testList = await TestList.findOneAndUpdate({_id:testId, isTestStarted: false},{$set:{isTestStarted: true}})
-    if(testList.entryFee === 0){
-      await TestList.findOneAndUpdate({_id:testId},{$set:{isTestStarted: false}})
-    }
     console.log("testList", testList)
     if(testList){
       const testListData = await TestData.find({testId})
       for (let index = 1; index <= testList.totalQuestions; index++) {
         setTimeout(async () => {
-          const testList  = await TestList.findOneAndUpdate({_id:testId, isConducted: false},{$set:{isConducted: true}})
-          if(testList.entryFee === 0){
-            await TestList.findOneAndUpdate({_id:testId},{$set:{isConducted: false}})
-          }
+          await TestList.findOneAndUpdate({_id:testId, isConducted: false},{$set:{isConducted: true}})
           const findUserTest = await UserTest.find({ testId }).populate('userId').populate('testId').sort({ totalMarks: -1 }).limit(250);
           for (let index = 0; index < findUserTest.length; index++) {
             const element = findUserTest[index];
@@ -91,9 +85,6 @@ io.on('connection', (socket:any)=>{
   socket.on('endTest', async (testDetails:any) => {
     const {testId} = testDetails
     const testList = await TestList.findOneAndUpdate({_id:testId, isConducted: false},{$set:{isConducted: true}})
-    if(testList.entryFee === 0){
-      await TestList.findOneAndUpdate({_id:testId},{$set:{isConducted: false}})
-    }
     console.log("end test hasa been called",testList)
     const testListData = await TestData.find({testId})
     socket.emit('testQuestions', {testListData, testList})
