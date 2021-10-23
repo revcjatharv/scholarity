@@ -41,6 +41,8 @@ io.on('connection', (socket:any)=>{
       activeUsers[testId] = [userId]
     }
 
+
+    activeUsers[testId] = [... new Set(activeUsers[testId])]
     console.log("activeUsers counts",activeUsers[testId].length )
 
     io.in(testId).emit('getActiveUser', {totalUser: activeUsers[testId].length, testId})
