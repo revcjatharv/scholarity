@@ -407,18 +407,22 @@ router.post('/uploadTestData',uploadFile.single('myFile'),async (req: any, res: 
   console.log("jsonArray",jsonArray)
   for (let index = 0; index < jsonArray.length; index++) {
     const element = jsonArray[index];
-    const testListName = await TestList.findOne({testName:element.testName});
+    const testListName = await TestList.find({testName:element.testName});
     delete element.testName;
-    if(testListName) {
-      element.options = []
-      element.options.push(element['options/0'])
-      element.options.push(element['options/1'])
-      element.options.push(element['options/2'])
-      element.options.push(element['options/3'])
-      element.testId=  testListName._id
-      const testData: ITestDataModel = new TestData({...element});
-      await testData.save()
+    for (let innerIndex = 0; innerIndex < testListName.length; innerIndex++) {
+      const newElem = testListName[innerIndex];
+      if(testListName) {
+        element.options = []
+        element.options.push(element['options/0'])
+        element.options.push(element['options/1'])
+        element.options.push(element['options/2'])
+        element.options.push(element['options/3'])
+        element.testId=  newElem._id
+        const testData: ITestDataModel = new TestData({...element});
+        await testData.save()
+      }
     }
+
   }
 
   return res.send({success: true, msg: 'saved test success'});
