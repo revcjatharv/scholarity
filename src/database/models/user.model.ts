@@ -26,14 +26,6 @@ export default interface IUserModel extends IUser, Document {
 
 // ISSUE: Own every parameter and any missing dependencies
 const UserSchema = new Schema({
-  username : {
-    type     : Schema.Types.String,
-    lowercase: true,
-    unique   : true,
-    required : [true, "can't be blank"],
-    match    : [/^[a-zA-Z0-9]+$/, 'is invalid'],
-    index    : true
-  },
   email    : {
     type     : Schema.Types.String,
     lowercase: true,
@@ -106,7 +98,6 @@ UserSchema.methods.generateJWT = function (): string {
 
   return jwt.sign({
     id      : this._id,
-    username: this.username,
     exp     : exp.getTime() / 1000,
   }, JWT_SECRET);
 };
@@ -114,7 +105,6 @@ UserSchema.methods.generateJWT = function (): string {
 UserSchema.methods.toAuthJSON = function (): any {
   return {
     userId  : this._id,
-    username: this.username,
     email   : this.email,
     token   : this.generateJWT(),
     bio     : this.bio,
@@ -130,7 +120,6 @@ UserSchema.methods.toAuthJSON = function (): any {
 
 UserSchema.methods.toProfileJSONFor = function (user: IUserModel) {
   return {
-    username : this.username,
     bio      : this.bio,
     image    : this.image || 'https://static.productionready.io/images/smiley-cyrus.jpg',
     following: user ? user.isFollowing(this._id) : false,

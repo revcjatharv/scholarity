@@ -162,7 +162,6 @@ router.post('/users', async (req: Request, res: Response, next: NextFunction) =>
   if(isMobileNumber){
     return res.send({status: false, message: 'user already exist with same mobile number. Please try with new number or ask admin to reset it.'})
   }
-  user.username = req.body.user.username;
   user.email    = req.body.user.email;
   user.setPassword(req.body.user.password);
   user.bio   = '';

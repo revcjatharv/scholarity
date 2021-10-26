@@ -5,21 +5,6 @@ import { authentication } from '../utilities/authentication';
 const router: Router = Router();
 
 
-/**
- * PARAM :username
- */
-
-router.param('username', (req: Request, res: Response, next: NextFunction, username: string) => {
-
-  User
-    .findOne({username})
-    .then((user: IUserModel) => {
-      req.profile = user;
-      return next();
-    })
-    .catch(next);
-});
-
 
 /**
  * GET /api/profiles/:username
