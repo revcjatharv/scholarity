@@ -195,6 +195,37 @@ router.post('/sendNotificationToUsersFortest', async (req: Request, res: Respons
   return res.send('Cron started')
 })
 
+
+router.post('/deletePastTest', async (req: Request, res: Response, next: NextFunction) =>{
+  const mongoConnectionString = 'mongodb://atharv:atharv123@3.7.252.202:27017/scholarity?authSource=admin'
+  const agenda = new Agenda({ db: { address: mongoConnectionString } });
+  agenda.define('deletePastTest',
+    async (job: any, done: () => void) => {
+      const date = new Date(new Date().toISOString().split('T')[0])
+      const timeNow = new Date().toISOString().split('T')[1].split('.')[0].split(':');
+      const testList = await TestList.find({ date })
+      for (let index = 0; index < testList.length; index++) {
+        const element = testList[index];
+        const timeTest = element.testTime.split(':');
+        if(timeTest[0]<timeNow[0]){
+          await TestList.findOneAndUpdate({_id: element.id}, {$set: {isConducted: true}})
+        }
+        if(timeNow[0]===timeTest[0] && timeTest[1]<timeNow[1]){
+          await TestList.findOneAndUpdate({_id: element.id}, {$set: {isConducted: true}})
+        }
+        if(timeNow[0]===timeTest[0] && timeTest[1] === timeNow[1] && timeTest[2]<timeNow[2]){
+          await TestList.findOneAndUpdate({_id: element.id}, {$set: {isConducted: true}})
+        }
+      }
+      
+      done()
+    }
+  );
+  await agenda.start();
+  agenda.every('1 minutes', 'deletePastTest');
+  return res.send('Cron started')
+})
+
 router.post('/getWinner', async (req: Request, res: Response, next: NextFunction) => {
   const { testId, userId } = req?.body;
   let getUserTestData: IUserTestModel[]

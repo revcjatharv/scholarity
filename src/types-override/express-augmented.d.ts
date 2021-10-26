@@ -10,7 +10,6 @@ declare module "express" {
     profile?: User;
     payload?: {
       id: string,
-      username: string,
       exp: number,
       iat: number
     };
