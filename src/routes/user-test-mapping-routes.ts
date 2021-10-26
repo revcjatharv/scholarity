@@ -202,7 +202,7 @@ router.post('/deletePastTest', async (req: Request, res: Response, next: NextFun
   agenda.define('deletePastTest',
     async (job: any, done: () => void) => {
       const date = new Date(new Date().toISOString().split('T')[0])
-      const timeNow = new Date().toISOString().split('T')[1].split('.')[0].split(':');
+      const timeNow = new Date().toLocaleString(undefined, { timeZone: 'Asia/Kolkata', hour12: false }).split(',')[1].split(':')
       const testList = await TestList.find({ date })
       for (let index = 0; index < testList.length; index++) {
         const element = testList[index];
