@@ -3,8 +3,9 @@ import logger from "../utilities/logger";
 import { DB } from "../utilities/secrets";
 
 // Build the connection string
-const dbURI = `mongodb://atharv:atharv123@3.7.252.202:27017/scholarity?authSource=admin`;
+const dbURI = `mongodb://myUserAdmin:myUserAdmin@34.228.13.202/scholarity?authSource=admin`;
 
+console.log(dbURI)
 const options = {
   useNewUrlParser   : true,
   useCreateIndex    : true,

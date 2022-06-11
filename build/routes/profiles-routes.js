@@ -6,18 +6,6 @@ const user_model_1 = require("../database/models/user.model");
 const authentication_1 = require("../utilities/authentication");
 const router = express_1.Router();
 /**
- * PARAM :username
- */
-router.param('username', (req, res, next, username) => {
-    user_model_1.User
-        .findOne({ username })
-        .then((user) => {
-        req.profile = user;
-        return next();
-    })
-        .catch(next);
-});
-/**
  * GET /api/profiles/:username
  */
 router.get('/:username', authentication_1.authentication.optional, (req, res, next) => {

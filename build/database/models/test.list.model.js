@@ -9,6 +9,10 @@ const TestListSchema = new mongoose_1.Schema({
     isConducted: {
         type: mongoose_1.Schema.Types.Boolean
     },
+    isTestStarted: {
+        type: mongoose_1.Schema.Types.Boolean,
+        default: false
+    },
     testType: {
         type: mongoose_1.Schema.Types.String,
         enum: ['UPSC', 'NEET', 'IIT', 'CA', 'AIIMS', 'GATE', 'NDA']
@@ -47,6 +51,7 @@ TestListSchema.methods.toAuthJSON = function () {
         id: this._id,
         date: this.date,
         isConducted: this.isConducted,
+        isTestStarted: this.isTestStarted,
         testName: this.testName,
         testDescription: this.testDescription,
         testTime: this.testTime,

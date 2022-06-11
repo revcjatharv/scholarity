@@ -1,0 +1,14 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/Users/atharvrevdikar/Desktop/scholar/scholarity/logs/.992298d55dfa655d5da6efc280e06b27cb54b0dd-audit.json",
+    "files": [
+        {
+            "date": 1654938533882,
+            "name": "/Users/atharvrevdikar/Desktop/scholar/scholarity/logs/2022-06-11.log",
+            "hash": "5996192c32f9c08f63482b974edbd371"
+        }
+    ]
+}

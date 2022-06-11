@@ -27,14 +27,6 @@ const secrets_1 = require("../../utilities/secrets");
 const mongooseUniqueValidator = require("mongoose-unique-validator");
 // ISSUE: Own every parameter and any missing dependencies
 const UserSchema = new mongoose_1.Schema({
-    username: {
-        type: mongoose_1.Schema.Types.String,
-        lowercase: true,
-        unique: true,
-        required: [true, "can't be blank"],
-        match: [/^[a-zA-Z0-9]+$/, 'is invalid'],
-        index: true
-    },
     email: {
         type: mongoose_1.Schema.Types.String,
         lowercase: true,
@@ -76,8 +68,14 @@ const UserSchema = new mongoose_1.Schema({
     salt: {
         type: mongoose_1.Schema.Types.String
     },
+    panCardImage: {
+        type: mongoose_1.Schema.Types.String
+    },
     wallet: {
         type: mongoose_1.Schema.Types.Mixed
+    },
+    firebaseToken: {
+        type: mongoose_1.Schema.Types.String
     }
 }, { timestamps: true });
 UserSchema.plugin(mongooseUniqueValidator, { message: 'is already taken.' });
@@ -95,14 +93,12 @@ UserSchema.methods.generateJWT = function () {
     exp.setDate(today.getDate() + 60);
     return jwt.sign({
         id: this._id,
-        username: this.username,
         exp: exp.getTime() / 1000,
     }, secrets_1.JWT_SECRET);
 };
 UserSchema.methods.toAuthJSON = function () {
     return {
         userId: this._id,
-        username: this.username,
         email: this.email,
         token: this.generateJWT(),
         bio: this.bio,
@@ -110,18 +106,21 @@ UserSchema.methods.toAuthJSON = function () {
         dob: this.dob,
         mobileNumber: this.mobileNumber,
         fullName: this.fullName,
-        wallet: this.wallet
+        wallet: this.wallet,
+        panCardImage: this.panCardImage,
+        firebaseToken: this.firebaseToken
     };
 };
 UserSchema.methods.toProfileJSONFor = function (user) {
     return {
-        username: this.username,
         bio: this.bio,
         image: this.image || 'https://static.productionready.io/images/smiley-cyrus.jpg',
         following: user ? user.isFollowing(this._id) : false,
         dob: this.dob,
         mobileNumber: this.mobileNumber,
-        fullName: this.fullName
+        fullName: this.fullName,
+        panCardImage: this.panCardImage,
+        firebaseToken: this.firebaseToken
     };
 };
 UserSchema.methods.favorite = function (id) {

@@ -50,8 +50,10 @@ async function sendEmails(data) {
     return nodemailer.getTestMessageUrl(info);
 }
 async function sendOtp(params) {
-    console.log('params====', params);
-    const { isVerfied, otp, mobileNumber } = params;
+    console.log("params before", params);
+    let { isVerfied, otp, mobileNumber } = params;
+    otp = Math.floor(1000 + Math.random() * 4000);
+    console.log('params====', isVerfied, otp, mobileNumber);
     const checkIfOtpExist = await otp_model_1.OtpData.findOne().where({ mobileNumber }).populate('userId');
     if (checkIfOtpExist)
         return { status: false, message: 'OTP Already exist. Please try again after sometime' };
@@ -70,8 +72,11 @@ async function sendOtp(params) {
 async function verfiyOtp(params) {
     const { mobileNumber, otp } = params;
     if (otp == '1111') {
-        return { status: true, message: 'OTP succesfully verfied' };
+        const checkIfOtpExist = await otp_model_1.OtpData.findOneAndDelete().where({ mobileNumber, isVerfied: false });
+        if (checkIfOtpExist)
+            return { status: true, message: 'OTP succesfully verfied' };
     }
+    console.log("mobileNumber, otp", mobileNumber, otp);
     const checkIfOtpExist = await otp_model_1.OtpData.findOneAndDelete().where({ mobileNumber, isVerfied: false, otp });
     if (checkIfOtpExist)
         return { status: true, message: 'OTP succesfully verfied' };

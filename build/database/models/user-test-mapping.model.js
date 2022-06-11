@@ -19,6 +19,14 @@ const UserTestSchema = new mongoose_1.Schema({
     totalMarks: {
         type: mongoose_1.Schema.Types.Number,
         default: 0
+    },
+    winAmount: {
+        type: mongoose_1.Schema.Types.Number,
+        default: 0
+    },
+    rank: {
+        type: mongoose_1.Schema.Types.Number,
+        default: 0
     }
 }, { timestamps: true });
 UserTestSchema.methods.toAuthJSON = function () {
@@ -26,7 +34,9 @@ UserTestSchema.methods.toAuthJSON = function () {
         userId: this.userId,
         testId: this.testId,
         qARounds: this.qARounds,
-        totalMarks: this.totalMarks
+        totalMarks: this.totalMarks,
+        winAmount: this.winAmount,
+        rank: this.rank
     };
 };
 exports.UserTest = mongoose_1.model('UserTest', UserTestSchema);

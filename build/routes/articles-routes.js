@@ -42,6 +42,10 @@ router.get('/getArticleType', async function (req, res, next) {
     if (HOME_PAGE > -1) {
         types.splice(HOME_PAGE, 1);
     }
+    const PREPARE = types.indexOf('PREPARE');
+    if (PREPARE > -1) {
+        types.splice(PREPARE, 1);
+    }
     const WALLET = types.indexOf('WALLET');
     if (WALLET > -1) {
         types.splice(WALLET, 1);
@@ -69,11 +73,14 @@ router.get('/feedback', function (req, res, next) {
     if (typeof req.query.type !== 'undefined') {
         query = { type: req.query.type };
     }
+    if (typeof req.query.userId !== 'undefined') {
+        query = Object.assign({ userId: req.query.userId }, query);
+    }
     return Promise.all([
         feedback_model_1.Feedback.find(Object.assign({}, query))
             .limit(Number(limit))
             .skip(Number(offset))
-            .sort({ createdAt: 'desc' })
+            .sort({ createdAt: 'asc' })
             .exec(),
         feedback_model_1.Feedback.count(Object.assign({}, query)).exec(),
     ]).then(function (results) {
@@ -86,6 +93,20 @@ router.get('/feedback', function (req, res, next) {
             feedbacksCount: feedbacksCount
         });
     }).catch(next);
+});
+router.post('/docs', function (req, res, next) {
+    const { type } = req.body;
+    let url = '';
+    if (type === 'refund') {
+        url = 'https://scholaritynew.s3.ap-south-1.amazonaws.com/5_6217249440550356178.html';
+    }
+    else if (type === 'tnc') {
+        url = 'https://scholaritynew.s3.ap-south-1.amazonaws.com/t+%26+c+final.html';
+    }
+    else if (type === 'privacy') {
+        url = 'https://scholaritynew.s3.ap-south-1.amazonaws.com/Privacy%2BPolicy+(1).pdf';
+    }
+    return res.send({ success: true, data: { url } });
 });
 router.post('/', function (req, res, next) {
     const article = new article_model_1.Article(req.body.article);
