@@ -23,7 +23,7 @@ exports.emailer = void 0;
 const nodemailer = __importStar(require("nodemailer"));
 const otp_model_1 = require("../database/models/otp.model");
 const SendOtp = require('sendotp');
-const sendOtpAuth = new SendOtp('365411AWdufHq35610e086cP1');
+const sendOtpAuth = new SendOtp('365411AbEYzlOQ5E9I62a4a061P1');
 async function sendEmails(data) {
     let testAccount = await nodemailer.createTestAccount();
     // create reusable transporter object using the default SMTP transport
@@ -58,10 +58,10 @@ async function sendOtp(params) {
     if (checkIfOtpExist)
         return { status: false, message: 'OTP Already exist. Please try again after sometime' };
     const otpData = new otp_model_1.OtpData({ isVerfied, otp, mobileNumber });
-    sendOtpAuth.send(mobileNumber, 'SCHLRT', otp, function (error, data) {
+    sendOtpAuth.send(mobileNumber, '777777', otp, function (error, data) {
         if (error)
             return { status: false, message: 'Failed to send OTP. Please try again later' };
-        console.log(data); // data object with keys 'message' and 'type'
+        console.log(data, 'this is the data'); // data object with keys 'message' and 'type'
         if (data.type == 'error')
             return { status: false, message: 'Failed to send OTP. Please try again later' };
     });

@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const logger_1 = __importDefault(require("../utilities/logger"));
 // Build the connection string
-const dbURI = `mongodb://myUserAdmin:myUserAdmin@34.228.13.202/scholarity?authSource=admin`;
+const dbURI = `mongodb://tom:jerry@34.228.13.202/scholarity?authSource=admin`;
 console.log(dbURI);
 const options = {
     useNewUrlParser: true,
