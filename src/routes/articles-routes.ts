@@ -119,7 +119,7 @@ router.post('/docs', function (req: Request, res: Response, next){
   } else if(type === 'tnc'){
     url = 'https://scholarbucket.s3.ap-south-1.amazonaws.com/SCHL_TC.html'
   } else if (type=== 'privacy'){
-    url = 'https://scholarbucket.s3.ap-south-1.amazonaws.com/SCHL_TC.html'
+    url = 'https://scholarbucket.s3.ap-south-1.amazonaws.com/5_6217249440550356222.html'
   }
   return res.send({success: true, data:{url}})
 })
