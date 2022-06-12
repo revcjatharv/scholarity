@@ -50,6 +50,11 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
   const user = await User.findById(userId);
   const test = await TestList.findById(testId)
 
+  let indianDate:any = new Date().toLocaleString("en-Us", {timeZone: 'Asia/Kolkata'});
+  indianDate = indianDate.split(',')
+  let date = indianDate[0];
+  let time = indianDate[1].split(' ')[1];
+
   if (user && user.wallet && user.wallet.balance >= test.entryFee) {
     
     console.log("user is coming here====>",user, "===========",test)

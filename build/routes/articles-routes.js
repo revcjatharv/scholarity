@@ -98,13 +98,13 @@ router.post('/docs', function (req, res, next) {
     const { type } = req.body;
     let url = '';
     if (type === 'refund') {
-        url = 'https://scholaritynew.s3.ap-south-1.amazonaws.com/5_6217249440550356178.html';
+        url = 'https://scholarbucket.s3.ap-south-1.amazonaws.com/SCHL_refund.html';
     }
     else if (type === 'tnc') {
-        url = 'https://scholaritynew.s3.ap-south-1.amazonaws.com/t+%26+c+final.html';
+        url = 'https://scholarbucket.s3.ap-south-1.amazonaws.com/SCHL_TC.html';
     }
     else if (type === 'privacy') {
-        url = 'https://scholaritynew.s3.ap-south-1.amazonaws.com/Privacy%2BPolicy+(1).pdf';
+        url = 'https://scholarbucket.s3.ap-south-1.amazonaws.com/5_6217249440550356222.html';
     }
     return res.send({ success: true, data: { url } });
 });

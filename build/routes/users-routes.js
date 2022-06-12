@@ -32,9 +32,10 @@ const s3 = new aws.S3({
 });
 const upload = multer({
     limits: {
-        fileSize: 500 * 1024 * 1024
+        fileSize: 1024 * 1024 * 1024
     },
     fileFilter: (req, file, cb) => {
+        console.log('did i came gere');
         cb(null, { success: true, msg: 'true' });
     },
     storage: multerS3({
@@ -336,6 +337,7 @@ router.post('/uploadTestList', uploadFile.single('myFile'), async (req, res, nex
     console.log("jsonArray", jsonArray);
     for (let index = 0; index < jsonArray.length; index++) {
         const element = jsonArray[index];
+        element.isConducted = false;
         const testList = new test_list_model_1.TestList(Object.assign({}, element));
         await testList.save();
     }
